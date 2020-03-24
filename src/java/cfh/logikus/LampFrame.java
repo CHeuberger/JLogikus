@@ -2,11 +2,7 @@ package cfh.logikus;
 
 import java.awt.Graphics;
 
-import javax.swing.JComponent;
-
-public class LampFrame extends JComponent {
-
-    private final Settings settings = Settings.INSTANCE;
+public class LampFrame extends Component {
     
     @Override
     protected void paintComponent(Graphics g) {

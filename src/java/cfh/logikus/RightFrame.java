@@ -1,11 +1,8 @@
 package cfh.logikus;
 
 import java.awt.Graphics;
-import javax.swing.JComponent;
 
-public class RightFrame extends JComponent {
-
-    private final Settings settings = Settings.INSTANCE;
+public class RightFrame extends Component {
     
     @Override
     protected void paintComponent(Graphics g) {

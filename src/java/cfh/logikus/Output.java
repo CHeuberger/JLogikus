@@ -2,12 +2,9 @@ package cfh.logikus;
 
 import java.awt.BorderLayout;
 
-import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-public class Output extends JComponent {
-
-    private Settings settings = Settings.INSTANCE;
+public class Output extends Component {
     
     private final ContactGroup contacts;
     

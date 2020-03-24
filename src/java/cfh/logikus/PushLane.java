@@ -4,30 +4,25 @@ import static java.awt.GridBagConstraints.*;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.Insets;
 
 import javax.swing.BorderFactory;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
 
-public class PushLane extends JComponent {
+public class PushLane extends Component {
 
-    private final ContactGroup contactA = new ContactGroup.Horizontal();
-    private final ContactGroup contactB = new ContactGroup.Horizontal();
-    private final PushButton button = new PushButton();
+    private final SwitchContact contacts;
+    private final PushButton button;
     
     public PushLane() {
-        var panel = new JPanel();
-        panel.setBorder(BorderFactory.createRaisedBevelBorder());
-        panel.setLayout(new GridLayout(0, 1));
-        panel.add(contactA);
-        panel.add(contactB);
+        contacts = new SwitchContact.Vertical();
+        button = new PushButton();
         
+        contacts.setBorder(BorderFactory.createRaisedBevelBorder());
+
         var insets = new Insets(0, 0, 0, 0);
         
         setLayout(new GridBagLayout());
-        add(panel, new GridBagConstraints(0, 0, 1, 1, 0.0, 1.0, NORTH, NONE, insets, 0, 0));
+        add(contacts, new GridBagConstraints(0, 0, 1, 1, 0.0, 1.0, NORTH, NONE, insets, 0, 0));
         add(button, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, CENTER, NONE, insets, 0, 0));
     }
 }

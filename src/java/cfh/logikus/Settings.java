@@ -23,5 +23,5 @@ public enum Settings {
     
     public int toggleCount() { return 5; }
     
-    public int  laneCount() { return 10; }
+    public int laneCount() { return 10; }
 }

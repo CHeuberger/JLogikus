@@ -1,12 +1,8 @@
 package cfh.logikus;
 
 import java.awt.Graphics;
-import javax.swing.JComponent;
 
-public class LeftFrame extends JComponent {
-
-    private final Settings settings = Settings.INSTANCE;
-    
+public class LeftFrame extends Component {
     
     @Override
     protected void paintComponent(Graphics g) {

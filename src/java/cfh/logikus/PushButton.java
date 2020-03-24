@@ -5,11 +5,7 @@ import java.awt.Graphics;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import javax.swing.JComponent;
-
-public class PushButton extends JComponent {
-
-    private final Settings settings = Settings.INSTANCE;
+public class PushButton extends Component {
     
     private boolean pressed = false;
     

@@ -2,11 +2,7 @@ package cfh.logikus;
 
 import java.awt.Graphics;
 
-import javax.swing.JComponent;
-
-public class Contact extends JComponent {
-    
-    private final Settings settings = Settings.INSTANCE;
+public class Contact extends Component {
 
     public Contact() {
         setPreferredSize(settings.contactSize());

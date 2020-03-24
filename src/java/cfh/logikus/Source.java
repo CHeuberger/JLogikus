@@ -2,10 +2,9 @@ package cfh.logikus;
 
 import java.awt.BorderLayout;
 
-import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-public class Source extends JComponent {
+public class Source extends Component {
 
     private final ContactGroup contacts;
     

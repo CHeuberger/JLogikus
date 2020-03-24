@@ -11,13 +11,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
-import javax.swing.BorderFactory;
-import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-public class ToggleLane extends JComponent {
-
-    private final Settings settings = Settings.INSTANCE;
+public class ToggleLane extends Component {
     
     private final List<ToggleContact> contacts;
     private final ToggleButton button;
