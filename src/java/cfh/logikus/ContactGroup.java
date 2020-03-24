@@ -24,6 +24,10 @@ public abstract class ContactGroup extends Component {
         setLayout(createLayout());
         contacts.forEach(this::add);
     }
+
+    public Stream<Contact> contacts() {
+        return contacts.stream();
+    }
     
     protected abstract LayoutManager createLayout();
     

@@ -1,20 +1,27 @@
 package cfh.logikus;
 
+import java.util.stream.Stream;
+
 public class Output extends Module {
     
     private final LampFrame lamp;
-    private final ContactGroup contact;
+    private final ContactGroup group;
     
     public Output() {
         lamp = new LampFrame();
-        contact = new ContactGroup.Horizontal();
+        group = new ContactGroup.Horizontal();
     }
     
     public LampFrame lamp() {
         return lamp;
     }
     
-    public ContactGroup contact() {
-        return contact;
+    public ContactGroup group() {
+        return group;
+    }
+    
+    @Override
+    public Stream<Contact> contacts() {
+        return group.contacts();
     }
 }

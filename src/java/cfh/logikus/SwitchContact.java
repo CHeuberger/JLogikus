@@ -5,6 +5,7 @@ import static java.awt.GridBagConstraints.*;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.util.stream.Stream;
 
 public abstract class SwitchContact extends Component {
 
@@ -18,6 +19,12 @@ public abstract class SwitchContact extends Component {
         populate();
     }
     
+    public Stream<Contact> contacts() {
+        return Stream.concat(
+            contact1.contacts(),
+            contact2.contacts());
+    }
+        
     protected abstract ContactGroup createContact();
     protected abstract void populate();
     

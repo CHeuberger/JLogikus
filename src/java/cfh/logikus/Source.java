@@ -1,14 +1,21 @@
 package cfh.logikus;
 
+import java.util.stream.Stream;
+
 public class Source extends Module {
 
-    private final ContactGroup contact;
+    private final ContactGroup group;
     
     public Source() {
-        contact = new ContactGroup.Horizontal();
+        group = new ContactGroup.Horizontal();
     }
     
-    public ContactGroup contact() {
-        return contact;
+    public ContactGroup group() {
+        return group;
+    }
+    
+    @Override
+    public Stream<Contact> contacts() {
+        return group.contacts();
     }
 }

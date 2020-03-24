@@ -39,4 +39,9 @@ public class ToggleLane extends Module {
     public ToggleButton button() {
         return button;
     }
+    
+    @Override
+    public Stream<Contact> contacts() {
+        return contacts.stream().flatMap(ToggleContacts::contacts);
+    }
 }

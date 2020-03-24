@@ -4,6 +4,7 @@ import static java.awt.GridBagConstraints.*;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.util.stream.Stream;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
@@ -29,5 +30,13 @@ public class ToggleContacts extends Module {
     
     public JComponent panel() {
         return panel;
+    }
+    
+    @Override
+    public Stream<Contact> contacts() {
+        return Stream.concat(
+            open.contacts(),
+            closed.contacts()
+            );
     }
 }

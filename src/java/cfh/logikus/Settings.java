@@ -1,5 +1,6 @@
 package cfh.logikus;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Insets;
@@ -12,6 +13,7 @@ public enum Settings {
     
     public int laneCount() { return 10; }
     public int switchCount() { return 5; }
+    
     public int groupCount() { return 3; }
     public int groupBorder() { return 3; }
 
@@ -30,12 +32,7 @@ public enum Settings {
     public int buttonSlide() { return 20; }
     public Color buttonColor() { return new Color(0xA0, 0x00, 0x00, 0xFF); }
     public Color buttonPressed() { return new Color(0xD0, 0x00, 0x00, 0xFF); }
-    
-    
-//    public Dimension rightSize() { return new Dimension(20, 150); }
-//    
-//    Dimension lampSize() {
-//        // TODO Auto-generated method stub
-//        return null;
-//    }
+
+    public Color connectionColor() { return new Color(0x00, 0x60, 0xFF, 0xC0); }
+    public BasicStroke connectionStroke() { return new BasicStroke(7, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND); }
 }
