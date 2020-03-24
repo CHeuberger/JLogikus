@@ -15,12 +15,12 @@ import javax.swing.JPanel;
 
 public class ToggleLane extends Component {
     
-    private final List<ToggleContact> contacts;
+    private final List<SwitchContact> contacts;
     private final ToggleButton button;
     
     public ToggleLane() {
         this.contacts = Collections.unmodifiableList(
-            Stream.generate(ToggleContact::new).limit(settings.toggleCount()).collect(toList())
+            Stream.generate(SwitchContact.HorizontalDouble::new).limit(settings.toggleCount()).collect(toList())
             );
         this.button = new ToggleButton();
         

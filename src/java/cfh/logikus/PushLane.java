@@ -6,8 +6,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 
-import javax.swing.BorderFactory;
-
 public class PushLane extends Component {
 
     private final SwitchContact contacts;
@@ -16,8 +14,6 @@ public class PushLane extends Component {
     public PushLane() {
         contacts = new SwitchContact.Vertical();
         button = new PushButton();
-        
-        contacts.setBorder(BorderFactory.createRaisedBevelBorder());
 
         var insets = new Insets(0, 0, 0, 0);
         
