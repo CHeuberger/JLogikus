@@ -1,24 +1,25 @@
 package cfh.logikus;
 
+import static java.awt.GridBagConstraints.*;
+
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.LayoutManager;
 
 public abstract class SwitchContact extends Component {
 
-    private final ContactGroup contact1;
-    private final ContactGroup contact2;
+    protected final ContactGroup contact1;
+    protected final ContactGroup contact2;
     
     private SwitchContact() {
         contact1 = createContact();
         contact2 = createContact();
         
-        setLayout(createLayout());
-        add(contact1);
-        add(contact2);
+        populate();
     }
     
     protected abstract ContactGroup createContact();
-    protected abstract LayoutManager createLayout();
+    protected abstract void populate();
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
@@ -28,8 +29,10 @@ public abstract class SwitchContact extends Component {
             return new ContactGroup.Vertical();
         }
         @Override
-        protected LayoutManager createLayout() {
-            return new GridLayout(1, 0);
+        protected void populate() {
+            setLayout(new GridBagLayout());
+            add(contact1, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, WEST, NONE, insets, 0, 0));
+            add(contact2, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, EAST, NONE, insets, 0, 0));
         }
     }
     
@@ -39,8 +42,10 @@ public abstract class SwitchContact extends Component {
             return new ContactGroup.Horizontal();
         }
         @Override
-        protected LayoutManager createLayout() {
-            return new GridLayout(0, 1);
+        protected void populate() {
+            setLayout(new GridLayout(0, 1));
+            add(contact1);
+            add(contact2);
         }
     }
 }

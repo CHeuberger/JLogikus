@@ -7,7 +7,7 @@ import javax.swing.JComponent;
 public abstract class Component extends JComponent {
     
     protected final Settings settings = Settings.INSTANCE;
-    protected final Insets insets = new Insets(2, 2, 2, 2);
+    protected final Insets insets = settings.insets();
     
     protected Insets expand(Insets base, int vertical, int horizontal) {
         return new Insets(

@@ -59,7 +59,7 @@ public class LogikusPanel extends Component {
         y = 2;
         add(push.contact(), new GridBagConstraints(0, y, 1, 1, 0.0, 1.0, NORTH, NONE, insets, 0, 0));
         for (var toggle : toggles) {
-            add(toggle.contactPanel(), new GridBagConstraints(RELATIVE, y, 1, 1, 0.0, 0.0, SOUTH, BOTH, insets , 0, 0));
+            add(toggle.contactPanel(), new GridBagConstraints(RELATIVE, y, 1, 1, 0.0, 0.0, CENTER, VERTICAL, insets , 0, 0));
         }
         
         // buttons

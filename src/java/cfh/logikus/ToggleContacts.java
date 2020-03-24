@@ -1,6 +1,9 @@
 package cfh.logikus;
 
-import java.awt.GridLayout;
+import static java.awt.GridBagConstraints.*;
+
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
@@ -18,13 +21,10 @@ public class ToggleContacts extends Module {
         closed = new SwitchContact.Horizontal();
         
         panel = new JPanel();
-        panel.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createEmptyBorder(2, 20, 2, 20),
-            BorderFactory.createRaisedSoftBevelBorder()
-            ));
-        panel.setLayout(new GridLayout(0, 1));
-        panel.add(open);
-        panel.add(closed);
+        panel.setBorder(BorderFactory.createRaisedSoftBevelBorder());
+        panel.setLayout(new GridBagLayout());
+        panel.add(open,   new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, SOUTH, HORIZONTAL, insets , 0, 0));
+        panel.add(closed, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, NORTH, HORIZONTAL, insets , 0, 0));
     }
     
     public JComponent panel() {
