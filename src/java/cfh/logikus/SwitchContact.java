@@ -3,8 +3,6 @@ package cfh.logikus;
 import java.awt.GridLayout;
 import java.awt.LayoutManager;
 
-import javax.swing.BorderFactory;
-
 public abstract class SwitchContact extends Component {
 
     private final ContactGroup contact1;
@@ -14,7 +12,6 @@ public abstract class SwitchContact extends Component {
         contact1 = createContact();
         contact2 = createContact();
         
-        setBorder(BorderFactory.createRaisedSoftBevelBorder());
         setLayout(createLayout());
         add(contact1);
         add(contact2);
@@ -25,25 +22,14 @@ public abstract class SwitchContact extends Component {
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
-    public static class HorizontalDouble extends SwitchContact {
-        
-        private final ContactGroup contact3;
-        private final ContactGroup contact4;
-        
-        public HorizontalDouble() {
-            contact3 = createContact();
-            contact4 = createContact();
-            
-            add(contact3);
-            add(contact4);
-        }
+    public static class Horizontal extends SwitchContact {
         @Override
         protected ContactGroup createContact() {
             return new ContactGroup.Vertical();
         }
         @Override
         protected LayoutManager createLayout() {
-            return new GridLayout(2, 0);
+            return new GridLayout(1, 0);
         }
     }
     

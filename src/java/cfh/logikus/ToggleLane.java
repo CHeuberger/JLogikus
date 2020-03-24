@@ -13,21 +13,20 @@ import javax.swing.JPanel;
 
 public class ToggleLane extends Module {
     
-    private final List<SwitchContact> contacts;
+    private final List<ToggleContacts> contacts;
     private final ToggleButton button;
     
     private final JComponent contactPanel;
     
     public ToggleLane() {
         this.contacts = unmodifiableList(
-            Stream.generate(SwitchContact.HorizontalDouble::new).limit(settings.switchCount()).collect(toList())
+            Stream.generate(ToggleContacts::new).limit(settings.switchCount()).collect(toList())
             );
         this.button = new ToggleButton();
         this.contactPanel = new JPanel();
         
         contactPanel.setLayout(new GridLayout(0, 1));
-        contactPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
-        contacts.forEach(contactPanel::add);
+        contacts.stream().map(ToggleContacts::panel).forEach(contactPanel::add);
     }
     
     public JComponent contactPanel() {

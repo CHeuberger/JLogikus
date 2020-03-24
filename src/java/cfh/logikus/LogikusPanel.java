@@ -50,12 +50,12 @@ public class LogikusPanel extends Component {
         
         // Source, Output
         y = 1;
-        add(source.contacts(), new GridBagConstraints(0, y, 1, 1, 0.0, 0.0, NORTH, NONE, insets, 0, 0));
+        add(source.contact(), new GridBagConstraints(0, y, 1, 1, 0.0, 0.0, NORTH, NONE, insets, 0, 0));
         for (var output : outputs) {
             add(output.contact(), new GridBagConstraints(RELATIVE, y, 1, 1, 1.0, 0.0, NORTH, NONE, insets, 0, 0));
         }
         
-        // contacts
+        // switches
         y = 2;
         add(push.contact(), new GridBagConstraints(0, y, 1, 1, 0.0, 1.0, NORTH, NONE, insets, 0, 0));
         for (var toggle : toggles) {

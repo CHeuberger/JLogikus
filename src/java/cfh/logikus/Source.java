@@ -2,13 +2,13 @@ package cfh.logikus;
 
 public class Source extends Module {
 
-    private final ContactGroup contacts;
+    private final ContactGroup contact;
     
     public Source() {
-        contacts = new ContactGroup.Horizontal();
+        contact = new ContactGroup.Horizontal();
     }
     
-    public ContactGroup contacts() {
-        return contacts;
+    public ContactGroup contact() {
+        return contact;
     }
 }

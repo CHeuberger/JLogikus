@@ -1,5 +1,7 @@
 package cfh.logikus;
 
+import javax.swing.BorderFactory;
+
 public class PushLane extends Module {
 
     private final SwitchContact contact;
@@ -7,6 +9,7 @@ public class PushLane extends Module {
     
     public PushLane() {
         contact = new SwitchContact.Vertical();
+        contact.setBorder(BorderFactory.createRaisedSoftBevelBorder());
         button = new PushButton();
     }
     
