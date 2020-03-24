@@ -11,13 +11,13 @@ import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-public class Push extends JComponent {
+public class PushLane extends JComponent {
 
     private final ContactGroup contactA = new ContactGroup(Orient.HORIZONTAL);
     private final ContactGroup contactB = new ContactGroup(Orient.HORIZONTAL);
     private final PushButton button = new PushButton();
     
-    public Push() {
+    public PushLane() {
         var panel = new JPanel();
         panel.setBorder(BorderFactory.createRaisedBevelBorder());
         panel.setLayout(new GridLayout(0, 1));
@@ -28,6 +28,6 @@ public class Push extends JComponent {
         
         setLayout(new GridBagLayout());
         add(panel, new GridBagConstraints(0, 0, 1, 1, 0.0, 1.0, NORTH, NONE, insets, 0, 0));
-        add(button, new GridBagConstraints(0, 2, 1, 1, 1.0, 0.0, CENTER, NONE, insets, 0, 0));
+        add(button, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, CENTER, NONE, insets, 0, 0));
     }
 }

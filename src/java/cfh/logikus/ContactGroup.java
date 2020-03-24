@@ -4,6 +4,7 @@ import static java.util.Objects.*;
 
 import java.awt.GridLayout;
 import java.util.List;
+import java.util.stream.Stream;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
@@ -17,7 +18,9 @@ public class ContactGroup extends JComponent {
     public ContactGroup(Orient orient) {
         requireNonNull(orient);
         
-        this.contacts = List.of(new Contact(), new Contact(), new Contact());
+        this.contacts = List.of(
+            Stream.generate(Contact::new).limit(settings.groupCount()).toArray(Contact[]::new)
+            );
 
         var border = settings.groupBorder();
         setBorder(BorderFactory.createEmptyBorder(border, border, border, border));
