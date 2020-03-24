@@ -1,35 +1,40 @@
 package cfh.logikus;
 
-import static java.awt.GridBagConstraints.*;
+import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.Insets;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
+import javax.swing.BorderFactory;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-public class ToggleLane extends Component {
+public class ToggleLane extends Module {
     
     private final List<SwitchContact> contacts;
     private final ToggleButton button;
     
+    private final JComponent contactPanel;
+    
     public ToggleLane() {
-        this.contacts = Collections.unmodifiableList(
-            Stream.generate(SwitchContact.HorizontalDouble::new).limit(settings.toggleCount()).collect(toList())
+        this.contacts = unmodifiableList(
+            Stream.generate(SwitchContact.HorizontalDouble::new).limit(settings.switchCount()).collect(toList())
             );
         this.button = new ToggleButton();
+        this.contactPanel = new JPanel();
         
-        var panel = new JPanel();
-        panel.setLayout(new GridLayout(0, 1));
-        contacts.forEach(panel::add);
-        
-        setLayout(new GridBagLayout());
-        add(panel,  new GridBagConstraints(0, 0, 1, 1, 0.0, 1.0, CENTER, BOTH, new Insets(0, 10, 0, 10), 0, 0));
-        add(button, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, CENTER, NONE, new Insets(0, 0, 0, 0), 0, 0));
+        contactPanel.setLayout(new GridLayout(0, 1));
+        contactPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+        contacts.forEach(contactPanel::add);
+    }
+    
+    public JComponent contactPanel() {
+        return contactPanel;
+    }
+    
+    public ToggleButton button() {
+        return button;
     }
 }

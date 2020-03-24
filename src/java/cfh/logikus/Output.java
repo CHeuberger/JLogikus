@@ -1,24 +1,20 @@
 package cfh.logikus;
 
-import java.awt.BorderLayout;
-
-import javax.swing.JPanel;
-
-public class Output extends Component {
+public class Output extends Module {
     
     private final LampFrame lamp;
-    private final ContactGroup contacts;
+    private final ContactGroup contact;
     
     public Output() {
         lamp = new LampFrame();
-        contacts = new ContactGroup.Horizontal();
-        
-        var panel = new JPanel();
-        panel.add(contacts);
-        
-        setLayout(new BorderLayout());
-        add(lamp);
-        add(panel, BorderLayout.PAGE_END);
-        setPreferredSize(settings.outputSize());
+        contact = new ContactGroup.Horizontal();
+    }
+    
+    public LampFrame lamp() {
+        return lamp;
+    }
+    
+    public ContactGroup contact() {
+        return contact;
     }
 }

@@ -14,7 +14,7 @@ public abstract class SwitchContact extends Component {
         contact1 = createContact();
         contact2 = createContact();
         
-        setBorder(BorderFactory.createRaisedBevelBorder());
+        setBorder(BorderFactory.createRaisedSoftBevelBorder());
         setLayout(createLayout());
         add(contact1);
         add(contact2);

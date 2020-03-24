@@ -1,24 +1,20 @@
 package cfh.logikus;
 
-import static java.awt.GridBagConstraints.*;
+public class PushLane extends Module {
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-
-public class PushLane extends Component {
-
-    private final SwitchContact contacts;
+    private final SwitchContact contact;
     private final PushButton button;
     
     public PushLane() {
-        contacts = new SwitchContact.Vertical();
+        contact = new SwitchContact.Vertical();
         button = new PushButton();
-
-        var insets = new Insets(0, 0, 0, 0);
-        
-        setLayout(new GridBagLayout());
-        add(contacts, new GridBagConstraints(0, 0, 1, 1, 0.0, 1.0, NORTH, NONE, insets, 0, 0));
-        add(button, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, CENTER, NONE, insets, 0, 0));
+    }
+    
+    public SwitchContact contact() {
+        return contact;
+    }
+    
+    public PushButton button() {
+        return button;
     }
 }

@@ -1,10 +1,10 @@
 package cfh.logikus;
 
+import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
 
 import java.awt.GridLayout;
 import java.awt.LayoutManager;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -15,7 +15,7 @@ public abstract class ContactGroup extends Component {
     private final List<Contact> contacts;
     
     private ContactGroup() {
-        this.contacts = Collections.unmodifiableList(
+        this.contacts = unmodifiableList(
             Stream.generate(Contact::new).limit(settings.groupCount()).collect(toList())
             );
 

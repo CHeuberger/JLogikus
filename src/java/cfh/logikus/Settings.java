@@ -7,26 +7,32 @@ public enum Settings {
 
     INSTANCE;
     
-    public Dimension contactSize() { return new Dimension(10, 10); }
-    public Color contactColor() { return Color.BLACK; }
-    public int contactRadius() {return 3; }
+    public int laneCount() { return 10; }
+    
+    public Dimension leftSize() { return new Dimension(40, 150); }
+    public Dimension lampSize() { return new Dimension(100, 150); }
+    public Dimension rightSize() { return new Dimension(40, 150); }
+    public Color displayFrame() { return new Color(0x40, 0x20, 0x00, 0xFF); }
+    public Color lampLight() { return new Color(0xC0, 0x60, 0x20, 0xFF); }
     
     public int groupBorder() { return 3; }
     public int groupCount() { return 3; }
     
-    public Dimension outputSize() { return new Dimension(100, 150); }
-    public Color displayFrame() { return new Color(0x40, 0x20, 0x00, 0xFF); }
+    public Dimension contactSize() { return new Dimension(10, 10); }
+    public Color contactColor() { return Color.BLACK; }
+    public int contactRadius() {return 3; }
     
-    public Dimension rightSize() { return new Dimension(20, 150); }
-    
-    public Dimension buttonSize() { return new Dimension(30,80); }
+    public Dimension buttonSize() { return new Dimension(30,60); }
     public int buttonSlide() { return 20; }
     public Color buttonColor() { return new Color(0xA0, 0x00, 0x00, 0xFF); }
     public Color buttonPressed() { return new Color(0xD0, 0x00, 0x00, 0xFF); }
     
-    public int toggleCount() { return 5; }
+    public int switchCount() { return 5; }
     
-    public int laneCount() { return 10; }
-    
-    public Color light() { return new Color(0xC0, 0x60, 0x20, 0xFF); }
+//    public Dimension rightSize() { return new Dimension(20, 150); }
+//    
+//    Dimension lampSize() {
+//        // TODO Auto-generated method stub
+//        return null;
+//    }
 }

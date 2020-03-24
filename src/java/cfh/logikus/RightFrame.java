@@ -7,6 +7,7 @@ public class RightFrame extends Component {
     public RightFrame() {
         setPreferredSize(settings.rightSize());
     }
+    
     @Override
     protected void paintComponent(Graphics g) {
         g.setColor(settings.displayFrame());

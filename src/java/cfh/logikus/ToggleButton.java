@@ -1,16 +1,21 @@
 package cfh.logikus;
 
-import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+
+import javax.swing.BorderFactory;
 
 public class ToggleButton extends Component {
     
     private boolean pressed = false;
     
     public ToggleButton() {
-        setPreferredSize(settings.buttonSize());
+        setBorder(BorderFactory.createLoweredSoftBevelBorder());
+        Dimension size = settings.buttonSize();
+        size.height += settings.buttonSlide();
+        setPreferredSize(size);
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent ev) {
@@ -27,8 +32,6 @@ public class ToggleButton extends Component {
         super.paintComponent(g);
         int slide = settings.buttonSlide();
         int h = getHeight() - slide;
-        g.setColor(Color.BLACK);
-        g.drawRoundRect(0, 0, getWidth()-1, getHeight()-1, 9, 9);
         g.setColor(pressed ? settings.buttonPressed() : settings.buttonColor());
         if (pressed) {
             slide = 0;
