@@ -17,9 +17,10 @@ public enum Settings {
     public Dimension outputSize() { return new Dimension(100, 150); }
     public Color displayFrame() { return new Color(0x40, 0x20, 0x00, 0xFF); }
     
-    public Dimension buttonSize() { return new Dimension(30,60); }
+    public Dimension buttonSize() { return new Dimension(30,80); }
+    public int buttonSlide() { return 20; }
     public Color buttonColor() { return new Color(0xA0, 0x00, 0x00, 0xFF); }
-    public Color buttonPressed() { return new Color(0x40, 0x00, 0x00, 0xFF); }
+    public Color buttonPressed() { return new Color(0xD0, 0x00, 0x00, 0xFF); }
     
     public int toggleCount() { return 5; }
     

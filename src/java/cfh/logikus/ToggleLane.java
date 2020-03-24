@@ -28,10 +28,8 @@ public class ToggleLane extends Component {
         panel.setLayout(new GridLayout(0, 1));
         contacts.forEach(panel::add);
         
-        var insets = new Insets(0, 0, 0, 0);
-        
         setLayout(new GridBagLayout());
-        add(panel, new GridBagConstraints(0, 0, 1, 1, 0.0, 1.0, NORTH, NONE, insets, 0, 0));
-        add(button, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, CENTER, NONE, insets, 0, 0));
+        add(panel,  new GridBagConstraints(0, 0, 1, 1, 0.0, 1.0, CENTER, BOTH, new Insets(0, 10, 0, 10), 0, 0));
+        add(button, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, CENTER, NONE, new Insets(0, 0, 0, 0), 0, 0));
     }
 }
