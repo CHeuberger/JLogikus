@@ -8,7 +8,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
 import javax.swing.JFrame;
@@ -28,13 +27,9 @@ public class TestGUI {
     private final List<ToggleLane> toggles;
     
     private TestGUI() {
-        source = new Source(Orient.HORIZONTAL);
+        source = new Source();
         outputs = Collections.unmodifiableList(
-            Stream
-            .iterate(Orient.HORIZONTAL, UnaryOperator.identity())
-            .limit(settings.laneCount())
-            .map(Output::new)
-            .collect(toList())
+            Stream.generate(Output::new).limit(settings.laneCount()).collect(toList())
             );
         outputs.get(outputs.size()-1).add(new RightFrame());
         push = new PushLane();

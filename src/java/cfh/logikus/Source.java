@@ -9,8 +9,8 @@ public class Source extends JComponent {
 
     private final ContactGroup contacts;
     
-    public Source(Orient orient) {
-        contacts = new ContactGroup(orient);
+    public Source() {
+        contacts = new ContactGroup.Horizontal();
         var panel = new JPanel();
         panel.add(contacts);
         

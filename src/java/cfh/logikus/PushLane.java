@@ -13,8 +13,8 @@ import javax.swing.JPanel;
 
 public class PushLane extends JComponent {
 
-    private final ContactGroup contactA = new ContactGroup(Orient.HORIZONTAL);
-    private final ContactGroup contactB = new ContactGroup(Orient.HORIZONTAL);
+    private final ContactGroup contactA = new ContactGroup.Horizontal();
+    private final ContactGroup contactB = new ContactGroup.Horizontal();
     private final PushButton button = new PushButton();
     
     public PushLane() {

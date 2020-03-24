@@ -11,8 +11,8 @@ public class Output extends JComponent {
     
     private final ContactGroup contacts;
     
-    public Output(Orient orient) {
-        contacts = new ContactGroup(orient);
+    public Output() {
+        contacts = new ContactGroup.Horizontal();
         var panel = new JPanel();
         panel.add(contacts);
         
