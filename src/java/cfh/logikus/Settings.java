@@ -17,6 +17,8 @@ public enum Settings {
     public Dimension outputSize() { return new Dimension(100, 150); }
     public Color displayFrame() { return new Color(0x40, 0x20, 0x00, 0xFF); }
     
+    public Dimension rightSize() { return new Dimension(20, 150); }
+    
     public Dimension buttonSize() { return new Dimension(30,80); }
     public int buttonSlide() { return 20; }
     public Color buttonColor() { return new Color(0xA0, 0x00, 0x00, 0xFF); }
@@ -25,4 +27,6 @@ public enum Settings {
     public int toggleCount() { return 5; }
     
     public int laneCount() { return 10; }
+    
+    public Color light() { return new Color(0xC0, 0x60, 0x20, 0xFF); }
 }

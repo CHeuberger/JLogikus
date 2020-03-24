@@ -31,7 +31,6 @@ public class TestGUI {
         outputs = Collections.unmodifiableList(
             Stream.generate(Output::new).limit(settings.laneCount()).collect(toList())
             );
-        outputs.get(outputs.size()-1).add(new RightFrame());
         push = new PushLane();
         toggles = Collections.unmodifiableList(
             Stream.generate(ToggleLane::new).limit(settings.laneCount()).collect(toList())
