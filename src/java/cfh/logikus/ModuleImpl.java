@@ -21,7 +21,7 @@ public abstract class ModuleImpl implements Module {
     
     @Override
     public void changed(Module module) {
-        parent.changed(module);
+        parent.changed(this);
     }
     
     @Override

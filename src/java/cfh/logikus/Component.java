@@ -23,7 +23,7 @@ public abstract class Component extends JComponent implements Module {
     
     @Override
     public void changed(Module module) {
-        parent.changed(module);
+        parent.changed(this);
     }
 
     @Override
