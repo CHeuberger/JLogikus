@@ -1,9 +1,10 @@
 package cfh.logikus;
 
 import static java.awt.GridBagConstraints.*;
+import static java.awt.event.InputEvent.*;
 import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
-
+import static javax.swing.SwingUtilities.isLeftMouseButton;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Graphics;
@@ -31,6 +32,8 @@ import javax.swing.JPopupMenu;
 
 public class LogikusPanel extends JComponent implements Module {
 
+    private static final int META_KEYS = CTRL_DOWN_MASK + SHIFT_DOWN_MASK + ALT_DOWN_MASK;
+    
     private final Settings settings = Settings.INSTANCE;
     
     private final Source source;
@@ -127,24 +130,42 @@ public class LogikusPanel extends JComponent implements Module {
             }
             @Override
             public void mouseClicked(MouseEvent ev) {
-                if (ev.getButton() == ev.BUTTON1) {
+                if (isLeftMouseButton(ev)) {
                     if (ev.getClickCount() == 1) {
                         if (ev.getComponent() instanceof Contact) {
                             var contact = (Contact) ev.getComponent();
-                            if (!contact.isConnected()) {
+                            var metaKeys = ev.getModifiersEx() & META_KEYS;
+                            if (metaKeys == 0) {
+                                if (!contact.isConnected()) {
+                                    if (start == null) {
+                                        start = contact;
+                                    } else if (contact == start) {
+                                        start = null;
+                                    } else {
+                                        mouseExited(ev);
+                                        Connection connection = new Connection(start, contact);
+                                        connections.add(connection);
+                                        start.connected(connection);
+                                        contact.connected(connection);
+                                        start = null;
+                                        update();
+                                    }
+                                }
+                            } else if (metaKeys == CTRL_DOWN_MASK) {
                                 if (start == null) {
                                     start = contact;
-                                    System.out.println("start " + start);
                                 } else {
-                                    Contact end = contact;
-                                    mouseExited(ev);
-                                    Connection connection = new Connection(start, end);
-                                    connections.add(connection);
-                                    start.connected(connection);
-                                    end.connected(connection);
+                                    var connection = contact.connection();
+                                    if (connection != null) {
+                                        if (connection.start() == start || connection.end() == start) {
+                                            if (connections.remove(connection)) {
+                                                connection.start().disconnected();
+                                                connection.end().disconnected();
+                                                update();
+                                            }
+                                        }
+                                    }
                                     start = null;
-                                    System.out.println("end " + end);
-                                    update();
                                 }
                             }
                         }
@@ -182,9 +203,6 @@ public class LogikusPanel extends JComponent implements Module {
             var active = source.contacts().map(networks::get).filter(Objects::nonNull).findAny().orElse(Set.of());
             active.forEach(Contact::active);
             connections.stream().filter(connection -> active.contains(connection.start())).forEach(Connection::active);
-            
-            networks.values().stream().distinct().map(s -> s.stream().map(Contact::id).collect(joining("  "))).forEach(System.out::println);
-            System.out.println();
         }
         repaint();
     }
