@@ -2,7 +2,11 @@ package cfh.logikus;
 
 import java.awt.Graphics;
 
-public class RightFrame extends Component {
+import javax.swing.JComponent;
+
+public class RightFrame extends JComponent {
+
+    private final Settings settings = Settings.INSTANCE;
 
     public RightFrame() {
         setPreferredSize(settings.rightSize());

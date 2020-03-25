@@ -10,34 +10,51 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.lang.invoke.StringConcatFactory;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import javax.swing.BorderFactory;
+import javax.swing.JComponent;
 
-public class LogikusPanel extends Component {
+public class LogikusPanel extends JComponent {
 
+    private final Settings settings = Settings.INSTANCE;
+    
     private final Source source;
     private final List<Output> outputs;
     private final PushLane push;
     private final List<ToggleLane> toggles;
     
-    private final transient List<Contact> contacts;
-    
     private final List<Connection> connections;
 
+    private final transient Object updateLock = new Object();
+    private final transient List<Contact> contacts;
+
     public LogikusPanel() {
-        source = new Source();
+        source = new Source("Q");
         outputs = unmodifiableList(
-            Stream.generate(Output::new).limit(settings.laneCount()).collect(toList())
+            IntStream.range(0, settings.laneCount())
+            .mapToObj(i -> "L + i")
+            .map(Output::new)
+            .collect(toList())
             );
-        push = new PushLane();
+        push = new PushLane("T");
         toggles = unmodifiableList(
-            Stream.generate(ToggleLane::new).limit(settings.laneCount()).collect(toList())
+            IntStream.range(0, settings.laneCount())
+            .mapToObj(String::valueOf)
+            .map(ToggleLane::new)
+            .collect(toList())
             );
         contacts = unmodifiableList(
             Stream.of(
@@ -61,6 +78,7 @@ public class LogikusPanel extends Component {
         setLayout(new GridBagLayout());
         
         int y;
+        Insets insets = settings.insets();
         // Display
         y = 0;
         add(new LeftFrame(), new GridBagConstraints(0, y, 1, 1, 0.0, 0.0, SOUTHEAST, HORIZONTAL, insets, 0, 0));
@@ -117,6 +135,7 @@ public class LogikusPanel extends Component {
                             if (!contact.isConnected()) {
                                 if (start == null) {
                                     start = contact;
+                                    System.out.println("start " + start);
                                 } else {
                                     Contact end = contact;
                                     mouseExited(ev);
@@ -124,6 +143,7 @@ public class LogikusPanel extends Component {
                                     start.connected();
                                     end.connected();
                                     start = null;
+                                    System.out.println("end " + end);
                                     repaint();
                                 }
                             }
@@ -133,6 +153,15 @@ public class LogikusPanel extends Component {
             }
         };
         contacts.forEach(c -> c.addMouseListener(adapter));
+    }
+    
+    private void update() {
+        synchronized (updateLock) {
+            var networks = new HashMap<Contact, Set<Contact>>();
+            for (var connection : connections) {
+                connection.contacts();  // XXX
+            }
+        }
     }
     
     @Override

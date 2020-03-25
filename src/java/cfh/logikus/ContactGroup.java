@@ -14,9 +14,11 @@ public abstract class ContactGroup extends Component {
     
     private final List<Contact> contacts;
     
-    private ContactGroup() {
+    private ContactGroup(Module module) {
+        super(module);
+        
         this.contacts = unmodifiableList(
-            Stream.generate(Contact::new).limit(settings.groupCount()).collect(toList())
+            Stream.generate(() -> this).map(Contact::new).limit(settings.groupCount()).collect(toList())
             );
 
         var border = settings.groupBorder();
@@ -29,11 +31,17 @@ public abstract class ContactGroup extends Component {
         return contacts.stream();
     }
     
+    @Override
+    public String toString() {
+        return module.toString();
+    }
+    
     protected abstract LayoutManager createLayout();
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
     public static class Horizontal extends ContactGroup {
+        public Horizontal(Module module) { super(module); }
         @Override
         public LayoutManager createLayout() {
             return new GridLayout(1, 0);
@@ -41,6 +49,7 @@ public abstract class ContactGroup extends Component {
     }
     
     public static class Vertical extends ContactGroup {
+        public Vertical(Module module) { super(module); }
         @Override
         public LayoutManager createLayout() {
             return new GridLayout(0, 1);

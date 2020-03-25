@@ -9,10 +9,12 @@ public class PushLane extends Module {
     private final SwitchContact group;
     private final PushButton button;
     
-    public PushLane() {
-        group = new SwitchContact.Vertical();
+    public PushLane(String id) {
+        super(id);
+        
+        group = new SwitchContact.Vertical(this);
         group.setBorder(BorderFactory.createRaisedSoftBevelBorder());
-        button = new PushButton();
+        button = new PushButton(this);
     }
     
     public SwitchContact group() {

@@ -17,9 +17,11 @@ public class ToggleContacts extends Module {
 
     private final transient JComponent panel;
     
-    public ToggleContacts() {
-        open = new SwitchContact.Horizontal();
-        closed = new SwitchContact.Horizontal();
+    public ToggleContacts(String id) {
+        super(id);
+        
+        open = new SwitchContact.Horizontal(this);
+        closed = new SwitchContact.Horizontal(this);
         
         panel = new JPanel();
         panel.setBorder(BorderFactory.createRaisedSoftBevelBorder());

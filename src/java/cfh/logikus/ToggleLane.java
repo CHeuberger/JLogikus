@@ -7,6 +7,7 @@ import static java.util.stream.Collectors.*;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.List;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import javax.swing.JComponent;
@@ -19,11 +20,16 @@ public class ToggleLane extends Module {
     
     private final JComponent contactPanel;
     
-    public ToggleLane() {
+    public ToggleLane(String id) {
+        super(id);
+        
         this.contacts = unmodifiableList(
-            Stream.generate(ToggleContacts::new).limit(settings.switchCount()).collect(toList())
+            IntStream.range('A', 'A'+settings.switchCount())
+            .mapToObj(String::valueOf)
+            .map(ToggleContacts::new)
+            .collect(toList())
             );
-        this.button = new ToggleButton();
+        this.button = new ToggleButton(this);
         this.contactPanel = new JPanel();
         
         contactPanel.setLayout(new GridBagLayout());

@@ -5,6 +5,7 @@ import static java.awt.GridBagConstraints.*;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.util.stream.Stream;
 
 public abstract class SwitchContact extends Component {
@@ -12,7 +13,9 @@ public abstract class SwitchContact extends Component {
     protected final ContactGroup contact1;
     protected final ContactGroup contact2;
     
-    private SwitchContact() {
+    private SwitchContact(Module module) {
+        super(module);
+        
         contact1 = createContact();
         contact2 = createContact();
         
@@ -31,12 +34,14 @@ public abstract class SwitchContact extends Component {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
     public static class Horizontal extends SwitchContact {
+        public Horizontal(Module module) { super(module); }
         @Override
         protected ContactGroup createContact() {
-            return new ContactGroup.Vertical();
+            return new ContactGroup.Vertical(module);
         }
         @Override
         protected void populate() {
+            Insets insets = settings.insets();
             setLayout(new GridBagLayout());
             add(contact1, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, WEST, NONE, insets, 0, 0));
             add(contact2, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, EAST, NONE, insets, 0, 0));
@@ -44,9 +49,10 @@ public abstract class SwitchContact extends Component {
     }
     
     public static class Vertical extends SwitchContact {
+        public Vertical(Module module) { super(module); }
         @Override
         protected ContactGroup createContact() {
-            return new ContactGroup.Horizontal();
+            return new ContactGroup.Horizontal(module);
         }
         @Override
         protected void populate() {

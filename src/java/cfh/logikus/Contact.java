@@ -1,13 +1,19 @@
 package cfh.logikus;
 
 import java.awt.Graphics;
+import java.util.stream.Stream;
 
 public class Contact extends Component {
+    
+    private final ContactGroup group;
     
     private transient boolean connected = false;
     private transient boolean active = false;
 
-    public Contact() {
+    public Contact(ContactGroup group) {
+        super(group.module());
+        this.group = group;
+        
         setPreferredSize(settings.contactSize());
     }
     
@@ -41,5 +47,14 @@ public class Contact extends Component {
     
     public boolean isActive() {
         return active;
+    }
+    
+    public Stream<Contact> contacts() {
+        return module.contacts();
+    }
+    
+    @Override
+    public String toString() {
+        return group.toString();  // TODO count and so
     }
 }

@@ -14,7 +14,9 @@ public class PushButton extends Component {
     private final Border unpressedBorder;
     private final Border pressedBorder;
     
-    public PushButton() {
+    public PushButton(Module module) {
+        super(module);
+        
         unpressedBorder = BorderFactory.createRaisedBevelBorder();
         pressedBorder = BorderFactory.createLoweredBevelBorder();
         

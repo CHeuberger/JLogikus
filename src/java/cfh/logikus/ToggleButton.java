@@ -11,7 +11,9 @@ public class ToggleButton extends Component {
     
     private boolean pressed = false;
     
-    public ToggleButton() {
+    public ToggleButton(Module module) {
+        super(module);
+        
         setBorder(BorderFactory.createLoweredSoftBevelBorder());
         Dimension size = settings.buttonSize();
         size.height += settings.buttonSlide();

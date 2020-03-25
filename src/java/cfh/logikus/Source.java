@@ -6,8 +6,10 @@ public class Source extends Module {
 
     private final ContactGroup group;
     
-    public Source() {
-        group = new ContactGroup.Horizontal();
+    public Source(String id) {
+        super(id);
+        
+        group = new ContactGroup.Horizontal(this);
     }
     
     public ContactGroup group() {

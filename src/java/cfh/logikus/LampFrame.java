@@ -6,7 +6,9 @@ public class LampFrame extends Component {
     
     private boolean light;
     
-    public LampFrame() {
+    public LampFrame(Module module) {
+        super(module);
+        
         setPreferredSize(settings.lampSize());
     }
     

@@ -7,9 +7,11 @@ public class Output extends Module {
     private final LampFrame lamp;
     private final ContactGroup group;
     
-    public Output() {
-        lamp = new LampFrame();
-        group = new ContactGroup.Horizontal();
+    public Output(String id) {
+        super(id);
+        
+        lamp = new LampFrame(this);
+        group = new ContactGroup.Horizontal(this);
     }
     
     public LampFrame lamp() {
