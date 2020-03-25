@@ -4,17 +4,17 @@ import java.util.stream.Stream;
 
 import javax.swing.BorderFactory;
 
-public class PushLane extends Module {
+public class PushLane extends ModuleImpl {
 
     private final SwitchContact group;
     private final PushButton button;
     
-    public PushLane(String id) {
-        super(id);
+    public PushLane(String id, Module parent) {
+        super(id, parent);
         
-        group = new SwitchContact.Vertical(this);
+        group = new SwitchContact.Vertical(id, this);
         group.setBorder(BorderFactory.createRaisedSoftBevelBorder());
-        button = new PushButton(this);
+        button = new PushButton(id + "+", this);
     }
     
     public SwitchContact group() {

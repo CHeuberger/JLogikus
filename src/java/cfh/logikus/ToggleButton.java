@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.stream.Stream;
 
 import javax.swing.BorderFactory;
 
@@ -11,8 +12,8 @@ public class ToggleButton extends Component {
     
     private boolean pressed = false;
     
-    public ToggleButton(Module module) {
-        super(module);
+    public ToggleButton(String id, Module parent) {
+        super(id, parent);
         
         setBorder(BorderFactory.createLoweredSoftBevelBorder());
         Dimension size = settings.buttonSize();
@@ -30,10 +31,15 @@ public class ToggleButton extends Component {
     }
 
     @Override
+    public Stream<Contact> contacts() {
+        return Stream.empty();
+    }
+    
+    @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        int slide = settings.buttonSlide();
-        int h = getHeight() - slide;
+        var slide = settings.buttonSlide();
+        var h = getHeight() - slide;
         g.setColor(pressed ? settings.buttonPressed() : settings.buttonColor());
         if (pressed) {
             slide = 0;

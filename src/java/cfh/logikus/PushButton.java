@@ -3,22 +3,19 @@ package cfh.logikus;
 import java.awt.Graphics;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.stream.Stream;
 
 import javax.swing.BorderFactory;
-import javax.swing.border.Border;
 
 public class PushButton extends Component {
     
     private boolean pressed = false;
     
-    private final Border unpressedBorder;
-    private final Border pressedBorder;
-    
-    public PushButton(Module module) {
-        super(module);
+    public PushButton(String id, Module parent) {
+        super(id, parent);
         
-        unpressedBorder = BorderFactory.createRaisedBevelBorder();
-        pressedBorder = BorderFactory.createLoweredBevelBorder();
+        var unpressedBorder = BorderFactory.createRaisedBevelBorder();
+        var pressedBorder = BorderFactory.createLoweredBevelBorder();
         
         setBorder(unpressedBorder);
         setPreferredSize(settings.buttonSize());
@@ -53,8 +50,13 @@ public class PushButton extends Component {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        int h = getHeight();
+        var h = getHeight();
         g.setColor(pressed ? settings.buttonPressed() : settings.buttonColor());
         g.fillRoundRect(3, 3, getWidth()-6, h-6, 6, 6);
+    }
+    
+    @Override
+    public Stream<Contact> contacts() {
+        return Stream.empty();
     }
 }

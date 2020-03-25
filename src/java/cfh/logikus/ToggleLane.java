@@ -13,26 +13,27 @@ import java.util.stream.Stream;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-public class ToggleLane extends Module {
+public class ToggleLane extends ModuleImpl {
     
     private final List<ToggleContacts> contacts;
     private final ToggleButton button;
     
     private final JComponent contactPanel;
     
-    public ToggleLane(String id) {
-        super(id);
+    public ToggleLane(String id, Module parent) {
+        super(id, parent);
         
         this.contacts = unmodifiableList(
-            IntStream.range('A', 'A'+settings.switchCount())
-            .mapToObj(String::valueOf)
-            .map(ToggleContacts::new)
+            IntStream.range(0, settings.switchCount())
+            .map(i -> 'A' + i*2)
+            .mapToObj(s -> new ToggleContacts(id + (char)s + (char)(s+1), this))
             .collect(toList())
             );
-        this.button = new ToggleButton(this);
+        this.button = new ToggleButton(id + "+", this);
         this.contactPanel = new JPanel();
         
         contactPanel.setLayout(new GridBagLayout());
+        var insets = settings.insets();
         for (var contact : contacts) {
             contactPanel.add(contact.panel(), new GridBagConstraints(0, RELATIVE, 1, 1, 0.0, 1.0, CENTER, NONE, insets, 20, 0));
         }

@@ -1,13 +1,14 @@
 package cfh.logikus;
 
 import java.awt.Graphics;
+import java.util.stream.Stream;
 
 public class LampFrame extends Component {
     
     private boolean light;
     
-    public LampFrame(Module module) {
-        super(module);
+    public LampFrame(String id, Module parent) {
+        super(id, parent);
         
         setPreferredSize(settings.lampSize());
     }
@@ -21,4 +22,7 @@ public class LampFrame extends Component {
             g.fillRect(10, 10, getWidth()-21, getHeight()-21);
         }
     }
+
+    @Override
+    public Stream<Contact> contacts() { return Stream.empty(); }
 }

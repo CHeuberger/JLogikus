@@ -13,21 +13,18 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.lang.invoke.StringConcatFactory;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 
-public class LogikusPanel extends JComponent {
+public class LogikusPanel extends JComponent implements Module {
 
     private final Settings settings = Settings.INSTANCE;
     
@@ -42,18 +39,16 @@ public class LogikusPanel extends JComponent {
     private final transient List<Contact> contacts;
 
     public LogikusPanel() {
-        source = new Source("Q");
+        source = new Source("Q", this);
         outputs = unmodifiableList(
             IntStream.range(0, settings.laneCount())
-            .mapToObj(i -> "L + i")
-            .map(Output::new)
+            .mapToObj(i -> new Output("L"+i, this))
             .collect(toList())
             );
-        push = new PushLane("T");
+        push = new PushLane("T", this);
         toggles = unmodifiableList(
             IntStream.range(0, settings.laneCount())
-            .mapToObj(String::valueOf)
-            .map(ToggleLane::new)
+            .mapToObj(i -> new ToggleLane("S"+i, this))
             .collect(toList())
             );
         contacts = unmodifiableList(
@@ -77,10 +72,9 @@ public class LogikusPanel extends JComponent {
             ));
         setLayout(new GridBagLayout());
         
-        int y;
         Insets insets = settings.insets();
+        var y = 0;
         // Display
-        y = 0;
         add(new LeftFrame(), new GridBagConstraints(0, y, 1, 1, 0.0, 0.0, SOUTHEAST, HORIZONTAL, insets, 0, 0));
         for (var output : outputs) {
             add(output.lamp(), new GridBagConstraints(RELATIVE, y, 1, 1, 1.0, 0.5, SOUTH, HORIZONTAL, insets, 0, 0));
@@ -131,7 +125,7 @@ public class LogikusPanel extends JComponent {
                 if (ev.getButton() == ev.BUTTON1) {
                     if (ev.getClickCount() == 1) {
                         if (ev.getComponent() instanceof Contact) {
-                            Contact contact = (Contact) ev.getComponent();
+                            var contact = (Contact) ev.getComponent();
                             if (!contact.isConnected()) {
                                 if (start == null) {
                                     start = contact;
@@ -168,11 +162,26 @@ public class LogikusPanel extends JComponent {
     protected void paintChildren(Graphics g) {
         super.paintChildren(g);
         
-        Graphics2D gg = (Graphics2D) g.create();
+        var gg = (Graphics2D) g.create();
         try {
             connections.forEach(c -> c.paintComponent(this, gg));
         } finally {
             gg.dispose();
         }
+    }
+    
+    @Override
+    public String id() {
+        return "Logikus";
+    }
+
+    @Override
+    public Stream<Contact> contacts() {
+        return contacts.stream();
+    }
+    
+    @Override
+    public String toString() {
+        return id();
     }
 }

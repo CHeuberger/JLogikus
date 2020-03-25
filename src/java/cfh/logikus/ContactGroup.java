@@ -6,6 +6,7 @@ import static java.util.stream.Collectors.*;
 import java.awt.GridLayout;
 import java.awt.LayoutManager;
 import java.util.List;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import javax.swing.BorderFactory;
@@ -14,11 +15,14 @@ public abstract class ContactGroup extends Component {
     
     private final List<Contact> contacts;
     
-    private ContactGroup(Module module) {
-        super(module);
+    private ContactGroup(String id, Module parent) {
+        super(id, parent);
         
         this.contacts = unmodifiableList(
-            Stream.generate(() -> this).map(Contact::new).limit(settings.groupCount()).collect(toList())
+            IntStream
+            .range(0, settings.groupCount())
+            .mapToObj(i -> new Contact(id + i, this))
+            .collect(toList())
             );
 
         var border = settings.groupBorder();
@@ -27,13 +31,9 @@ public abstract class ContactGroup extends Component {
         contacts.forEach(this::add);
     }
 
+    @Override
     public Stream<Contact> contacts() {
         return contacts.stream();
-    }
-    
-    @Override
-    public String toString() {
-        return module.toString();
     }
     
     protected abstract LayoutManager createLayout();
@@ -41,7 +41,9 @@ public abstract class ContactGroup extends Component {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
     public static class Horizontal extends ContactGroup {
-        public Horizontal(Module module) { super(module); }
+        public Horizontal(String id, Module parent) {
+            super(id, parent);
+        }
         @Override
         public LayoutManager createLayout() {
             return new GridLayout(1, 0);
@@ -49,7 +51,9 @@ public abstract class ContactGroup extends Component {
     }
     
     public static class Vertical extends ContactGroup {
-        public Vertical(Module module) { super(module); }
+        public Vertical(String id, Module parent) {
+            super(id, parent);
+        }
         @Override
         public LayoutManager createLayout() {
             return new GridLayout(0, 1);

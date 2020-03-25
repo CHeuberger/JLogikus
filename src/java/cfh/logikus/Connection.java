@@ -54,4 +54,9 @@ public class Connection {
             end.contacts()
             );
     }
+    
+    @Override
+    public String toString() {
+        return start + "--" + end;
+    }
 }

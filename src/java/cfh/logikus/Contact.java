@@ -5,14 +5,11 @@ import java.util.stream.Stream;
 
 public class Contact extends Component {
     
-    private final ContactGroup group;
-    
     private transient boolean connected = false;
     private transient boolean active = false;
 
-    public Contact(ContactGroup group) {
-        super(group.module());
-        this.group = group;
+    public Contact(String id, ContactGroup group) {
+        super(id, group);
         
         setPreferredSize(settings.contactSize());
     }
@@ -49,12 +46,8 @@ public class Contact extends Component {
         return active;
     }
     
-    public Stream<Contact> contacts() {
-        return module.contacts();
-    }
-    
     @Override
-    public String toString() {
-        return group.toString();  // TODO count and so
+    public Stream<Contact> contacts() {
+        return parent.contacts();
     }
 }

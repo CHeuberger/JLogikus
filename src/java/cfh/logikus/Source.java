@@ -2,14 +2,14 @@ package cfh.logikus;
 
 import java.util.stream.Stream;
 
-public class Source extends Module {
+public class Source extends ModuleImpl {
 
     private final ContactGroup group;
     
-    public Source(String id) {
-        super(id);
+    public Source(String id, Module parent) {
+        super(id, parent);
         
-        group = new ContactGroup.Horizontal(this);
+        group = new ContactGroup.Horizontal(id + "_", this);
     }
     
     public ContactGroup group() {
