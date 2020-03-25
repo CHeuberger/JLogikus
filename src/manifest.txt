@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Implementation-Name: Logikus Emulator
+Implementation-Version: 0.0.1
+Implementation-Vendor: CFH
+Main-Class: cfh.logikus.TestGUI
