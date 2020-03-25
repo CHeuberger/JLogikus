@@ -12,6 +12,8 @@ public abstract class SwitchContact extends Component {
     protected final ContactGroup contact1;
     protected final ContactGroup contact2;
     
+    protected transient boolean closed = false;
+    
     private SwitchContact(String id, Module parent) {
         super(id, parent);
         
@@ -27,7 +29,25 @@ public abstract class SwitchContact extends Component {
             contact1.contacts(),
             contact2.contacts());
     }
-        
+    
+    @Override
+    public Stream<Contact> connected(Contact contact) {
+        if (closed) {
+            return contacts();
+        } else {
+            return Stream
+                .of(contact1, contact2)
+                .filter(g -> g.contacts().anyMatch(c -> c.equals(contact)))
+                .findAny()
+                .map(ContactGroup::contacts)
+                .orElse(Stream.empty());
+        }
+    }
+
+    public void closed(boolean closed) {
+        this.closed = closed;
+    }
+
     protected abstract ContactGroup createContact(String id);
     protected abstract void populate();
     

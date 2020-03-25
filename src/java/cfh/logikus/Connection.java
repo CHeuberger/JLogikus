@@ -35,23 +35,10 @@ public class Connection {
         gg.drawLine(ps.x, ps.y, pe.x, pe.y);
     }
 
-    public boolean update() {
-        active = start.isActive() || end.isActive();
-        boolean changed;
-        if (active) {
-            changed = !start.isActive() || !end.isActive();
-            start.active();
-            end.active();
-        } else {
-            changed = false;
-        }
-        return changed;
-    }
-    
-    public Stream<Contact> contacts() {
+    public Stream<Contact> connected() {
         return Stream.concat(
-            start.contacts(),
-            end.contacts()
+            start.connected(start),
+            end.connected(end)
             );
     }
     

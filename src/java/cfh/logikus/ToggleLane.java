@@ -16,7 +16,7 @@ import javax.swing.JPanel;
 public class ToggleLane extends ModuleImpl {
     
     private final List<ToggleContacts> contacts;
-    private final ToggleButton button;
+    private final Button button;
     
     private final JComponent contactPanel;
     
@@ -29,7 +29,7 @@ public class ToggleLane extends ModuleImpl {
             .mapToObj(s -> new ToggleContacts(id + (char)s + (char)(s+1), this))
             .collect(toList())
             );
-        this.button = new ToggleButton(id + "+", this);
+        this.button = new Button.Toggle(id + "+", this);
         this.contactPanel = new JPanel();
         
         contactPanel.setLayout(new GridBagLayout());
@@ -43,12 +43,22 @@ public class ToggleLane extends ModuleImpl {
         return contactPanel;
     }
     
-    public ToggleButton button() {
+    public Button button() {
         return button;
     }
     
     @Override
     public Stream<Contact> contacts() {
         return contacts.stream().flatMap(ToggleContacts::contacts);
+    }
+    
+    @Override
+    public Stream<Contact> connected(Contact contact) {
+        return contacts
+            .stream()
+            .filter(t -> t.contacts().anyMatch(c -> c.equals(contact)))
+            .findAny()
+            .map(s -> s.connected(contact))
+            .orElse(Stream.empty());
     }
 }

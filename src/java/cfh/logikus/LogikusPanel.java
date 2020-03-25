@@ -169,17 +169,22 @@ public class LogikusPanel extends JComponent implements Module {
         
     private void update() {
         synchronized (updateLock) {
+            contacts.forEach(Contact::deactive);
+            connections.forEach(Connection::deactive);
             var networks = new HashMap<Contact, Set<Contact>>();
             for (var connection : connections) {
                 var set = new HashSet<Contact>();
-                connection.contacts().forEach(contact -> {
+                connection.connected().forEach(contact -> {
                     set.addAll(networks.getOrDefault(contact, Set.of(contact)));
                 });
                 set.forEach(contact -> networks.put(contact, set));
             }
-            contacts.forEach(Contact::deactive);
             var active = source.contacts().map(networks::get).filter(Objects::nonNull).findAny().orElse(Set.of());
+            active.forEach(Contact::active);
             connections.stream().filter(connection -> active.contains(connection.start())).forEach(Connection::active);
+            
+            networks.values().stream().distinct().map(s -> s.stream().map(Contact::id).collect(joining("  "))).forEach(System.out::println);
+            System.out.println();
         }
         repaint();
     }
@@ -206,6 +211,17 @@ public class LogikusPanel extends JComponent implements Module {
         return contacts.stream();
     }
     
+    @Override
+    public Stream<Contact> connected(Contact contact) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    
+    @Override
+    public void changed(Module module) {
+        update();
+    }
+
     @Override
     public String toString() {
         return id();

@@ -15,6 +15,8 @@ public class ToggleContacts extends ModuleImpl {
     private final SwitchContact open;
     private final SwitchContact closed;
 
+    protected transient boolean toggled = false;
+    
     private final transient JComponent panel;
     
     public ToggleContacts(String id, Module parent) {
@@ -36,11 +38,27 @@ public class ToggleContacts extends ModuleImpl {
         return panel;
     }
     
+    public void toggle(boolean toggled) {
+        this.toggled = toggled;
+        open.closed(toggled);
+        closed.closed(!toggled);
+    }
+    
     @Override
     public Stream<Contact> contacts() {
         return Stream.concat(
             open.contacts(),
             closed.contacts()
             );
+    }
+    
+    @Override
+    public Stream<Contact> connected(Contact contact) {
+        return Stream
+            .of(open, closed)
+            .filter(g -> g.contacts().anyMatch(c -> c.equals(contact)))
+            .findAny()
+            .map(s -> s.connected(contact))
+            .orElse(Stream.empty());
     }
 }

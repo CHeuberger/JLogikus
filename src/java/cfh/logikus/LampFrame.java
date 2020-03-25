@@ -23,6 +23,17 @@ public class LampFrame extends Component {
         }
     }
 
+    public void light(boolean on) {
+        this.light = on;
+    }
+
     @Override
-    public Stream<Contact> contacts() { return Stream.empty(); }
+    public Stream<Contact> contacts() {
+        return Stream.empty();
+    }
+    
+    @Override
+    public Stream<Contact> connected(Contact contact) {
+        return Stream.empty();
+    }
 }

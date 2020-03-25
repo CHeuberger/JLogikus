@@ -26,4 +26,9 @@ public class Output extends ModuleImpl {
     public Stream<Contact> contacts() {
         return group.contacts();
     }
+    
+    @Override
+    public Stream<Contact> connected(Contact contact) {
+        return contacts();
+    }
 }

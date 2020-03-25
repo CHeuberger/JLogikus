@@ -20,6 +20,11 @@ public abstract class ModuleImpl implements Module {
     }
     
     @Override
+    public void changed(Module module) {
+        parent.changed(module);
+    }
+    
+    @Override
     public String toString() {
         return parent != null ? parent + "." + id : id;
     }

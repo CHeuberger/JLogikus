@@ -53,6 +53,11 @@ public class Contact extends Component {
     
     @Override
     public Stream<Contact> contacts() {
-        return parent.contacts();
+        return Stream.of(this);
+    }
+    
+    @Override
+    public Stream<Contact> connected(Contact contact) {
+        return parent.connected(contact);
     }
 }

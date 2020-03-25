@@ -36,6 +36,15 @@ public abstract class ContactGroup extends Component {
         return contacts.stream();
     }
     
+    @Override
+    public Stream<Contact> connected(Contact contact) {
+        if (contacts.contains(contact)) {
+            return parent.connected(contact);
+        } else {
+            return Stream.empty();
+        }
+    }
+    
     protected abstract LayoutManager createLayout();
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
