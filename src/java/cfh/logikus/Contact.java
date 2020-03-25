@@ -1,11 +1,12 @@
 package cfh.logikus;
 
 import java.awt.Graphics;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 public class Contact extends Component {
     
-    private transient boolean connected = false;
+    private transient Connection connection = null;
     private transient boolean active = false;
 
     public Contact(String id, ContactGroup group) {
@@ -23,15 +24,19 @@ public class Contact extends Component {
     }
     
     public void disconnected() {
-        connected = false;
+        connection = null;
     }
     
-    public void connected() {
-        connected = true;
+    public void connected(Connection connection) {
+        this.connection = Objects.requireNonNull(connection);
     }
     
     public boolean isConnected() {
-        return connected;
+        return connection != null;
+    }
+    
+    public Connection connection() {
+        return connection;
     }
     
     public void deactive() {

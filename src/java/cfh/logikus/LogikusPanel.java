@@ -138,9 +138,10 @@ public class LogikusPanel extends JComponent implements Module {
                                 } else {
                                     Contact end = contact;
                                     mouseExited(ev);
-                                    connections.add(new Connection(start, end));
-                                    start.connected();
-                                    end.connected();
+                                    Connection connection = new Connection(start, end);
+                                    connections.add(connection);
+                                    start.connected(connection);
+                                    end.connected(connection);
                                     start = null;
                                     System.out.println("end " + end);
                                     repaint();
@@ -165,7 +166,7 @@ public class LogikusPanel extends JComponent implements Module {
     private void doUpdate(ActionEvent ev) {
         update();
     }
-    
+        
     private void update() {
         synchronized (updateLock) {
             var networks = new HashMap<Contact, Set<Contact>>();
@@ -179,14 +180,8 @@ public class LogikusPanel extends JComponent implements Module {
             contacts.forEach(Contact::deactive);
             var active = source.contacts().map(networks::get).filter(Objects::nonNull).findAny().orElse(Set.of());
             connections.stream().filter(connection -> active.contains(connection.start())).forEach(Connection::active);
-            repaint();
-            
-            // XXX
-            networks.values().stream().distinct().map(
-                 set -> set.stream().map(Contact::id).collect(joining(","))
-                 ).forEach(System.out::println);
         }
-        System.out.println();  // XXX
+        repaint();
     }
     
     @Override
