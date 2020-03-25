@@ -61,4 +61,11 @@ public class ToggleLane extends ModuleImpl {
             .map(s -> s.connected(contact))
             .orElse(Stream.empty());
     }
+    
+    @Override
+    public void changed(Module module) {
+        var toggled = button.pressed();
+        contacts.forEach(t -> t.toggle(toggled));
+        super.changed(module);
+    }
 }

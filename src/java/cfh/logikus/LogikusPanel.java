@@ -144,7 +144,7 @@ public class LogikusPanel extends JComponent implements Module {
                                     end.connected(connection);
                                     start = null;
                                     System.out.println("end " + end);
-                                    repaint();
+                                    update();
                                 }
                             }
                         }

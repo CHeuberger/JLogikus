@@ -25,6 +25,7 @@ public class ToggleContacts extends ModuleImpl {
         var id2 = id.length()>=2 ? id.substring(0,  id.length()-2)+id.charAt(id.length()-1) : id + "B";
         open = new SwitchContact.Horizontal(id1, this);
         closed = new SwitchContact.Horizontal(id2, this);
+        toggle(false);
         
         panel = new JPanel();
         var insets = settings.insets();
