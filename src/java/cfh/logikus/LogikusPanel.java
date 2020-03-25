@@ -96,25 +96,36 @@ public class LogikusPanel extends Component {
             private Contact start = null;
             @Override
             public void mouseEntered(MouseEvent ev) {
-                previous = getCursor();
-                setCursor(cursor);
+                if (ev.getComponent() instanceof Contact && !((Contact)ev.getComponent()).isConnected()) {
+                    previous = getCursor();
+                    setCursor(cursor);
+                }
             }
             @Override
             public void mouseExited(MouseEvent ev) {
-                setCursor(previous);
+                if (previous != null) {
+                    setCursor(previous);
+                    previous = null;
+                }
             }
             @Override
             public void mouseClicked(MouseEvent ev) {
                 if (ev.getButton() == ev.BUTTON1) {
                     if (ev.getClickCount() == 1) {
                         if (ev.getComponent() instanceof Contact) {
-                            if (start == null) {
-                                start = (Contact) ev.getComponent();
-                            } else {
-                                Contact end = (Contact) ev.getComponent();
-                                connections.add(new Connection(start, end));
-                                start = null;
-                                repaint();
+                            Contact contact = (Contact) ev.getComponent();
+                            if (!contact.isConnected()) {
+                                if (start == null) {
+                                    start = contact;
+                                } else {
+                                    Contact end = contact;
+                                    mouseExited(ev);
+                                    connections.add(new Connection(start, end));
+                                    start.connected();
+                                    end.connected();
+                                    start = null;
+                                    repaint();
+                                }
                             }
                         }
                     }
