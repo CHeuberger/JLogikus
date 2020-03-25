@@ -141,7 +141,6 @@ public class LogikusPanel extends Component {
         
         Graphics2D gg = (Graphics2D) g.create();
         try {
-            gg.setStroke(settings.connectionStroke());
             connections.forEach(c -> c.paintComponent(this, gg));
         } finally {
             gg.dispose();

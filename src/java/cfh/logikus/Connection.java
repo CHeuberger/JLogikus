@@ -1,5 +1,6 @@
 package cfh.logikus;
 
+import java.awt.BasicStroke;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import javax.swing.SwingUtilities;
@@ -17,11 +18,15 @@ public class Connection {
     }
 
     public void paintComponent(Component panel, Graphics2D gg) {
-        gg.setColor(settings.connectionColor());
+        gg.setColor(settings.connectionColor2());
+        gg.setStroke(settings.connectionStroke2());
         int x = start.getWidth() / 2 - 1;
         int y = start.getHeight() / 2 - 1;
         Point ps = SwingUtilities.convertPoint(start, x, y, panel);
         Point pe = SwingUtilities.convertPoint(end, x, y, panel);
+        gg.drawLine(ps.x, ps.y, pe.x, pe.y);
+        gg.setColor(settings.connectionColor1());
+        gg.setStroke(settings.connectionStroke1());
         gg.drawLine(ps.x, ps.y, pe.x, pe.y);
     }
 }
