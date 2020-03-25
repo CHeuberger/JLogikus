@@ -40,8 +40,8 @@ public class Connection {
         boolean changed;
         if (active) {
             changed = !start.isActive() || !end.isActive();
-            start.activate();
-            end.activate();
+            start.active();
+            end.active();
         } else {
             changed = false;
         }
@@ -55,6 +55,26 @@ public class Connection {
             );
     }
     
+    public Contact start() {
+        return start;
+    }
+    
+    public Contact end() {
+        return end;
+    }
+    
+    public void deactive() {
+        active = false;
+    }
+    
+    public void active() {
+        active = true;
+    }
+    
+    public boolean isActive() {
+        return active;
+    }
+
     @Override
     public String toString() {
         return start + "--" + end;

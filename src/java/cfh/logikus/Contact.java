@@ -34,11 +34,11 @@ public class Contact extends Component {
         return connected;
     }
     
-    public void deactivate() {
+    public void deactive() {
         active = false;
     }
     
-    public void activate() {
+    public void active() {
         active = true;
     }
     

@@ -11,11 +11,14 @@ import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.IntStream;
@@ -23,6 +26,8 @@ import java.util.stream.Stream;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 
 public class LogikusPanel extends JComponent implements Module {
 
@@ -147,15 +152,41 @@ public class LogikusPanel extends JComponent implements Module {
             }
         };
         contacts.forEach(c -> c.addMouseListener(adapter));
+        
+        var update = new JMenuItem("update");
+        update.addActionListener(this::doUpdate);
+        
+        var popup = new JPopupMenu();
+        popup.add(update);
+        
+        setComponentPopupMenu(popup);
+    }
+    
+    private void doUpdate(ActionEvent ev) {
+        update();
     }
     
     private void update() {
         synchronized (updateLock) {
             var networks = new HashMap<Contact, Set<Contact>>();
             for (var connection : connections) {
-                connection.contacts();  // XXX
+                var set = new HashSet<Contact>();
+                connection.contacts().forEach(contact -> {
+                    set.addAll(networks.getOrDefault(contact, Set.of(contact)));
+                });
+                set.forEach(contact -> networks.put(contact, set));
             }
+            contacts.forEach(Contact::deactive);
+            var active = source.contacts().map(networks::get).filter(Objects::nonNull).findAny().orElse(Set.of());
+            connections.stream().filter(connection -> active.contains(connection.start())).forEach(Connection::active);
+            repaint();
+            
+            // XXX
+            networks.values().stream().distinct().map(
+                 set -> set.stream().map(Contact::id).collect(joining(","))
+                 ).forEach(System.out::println);
         }
+        System.out.println();  // XXX
     }
     
     @Override
