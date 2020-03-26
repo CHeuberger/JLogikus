@@ -1,4 +1,4 @@
-package cfh.logikus;
+package cfh.jlogikus;
 
 import static java.awt.GridBagConstraints.*;
 import static java.util.Collections.*;

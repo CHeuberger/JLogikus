@@ -1,4 +1,4 @@
-package cfh.logikus;
+package cfh.jlogikus;
 
 import java.awt.Graphics;
 
