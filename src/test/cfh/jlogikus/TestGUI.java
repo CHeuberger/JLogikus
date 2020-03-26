@@ -3,8 +3,6 @@ package cfh.jlogikus;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
-import cfh.jlogikus.LogikusPanel;
-
 public class TestGUI {
 
     public static void main(String[] args) {

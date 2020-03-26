@@ -4,7 +4,9 @@ import static java.awt.GridBagConstraints.*;
 import static java.awt.event.InputEvent.*;
 import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
+import static javax.swing.JOptionPane.*;
 import static javax.swing.SwingUtilities.isLeftMouseButton;
+
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Graphics;
@@ -13,8 +15,14 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -29,6 +37,8 @@ import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+
+import cfh.FileChooser;
 
 public class LogikusPanel extends JComponent implements Module {
 
@@ -175,13 +185,43 @@ public class LogikusPanel extends JComponent implements Module {
         };
         contacts.forEach(c -> c.addMouseListener(adapter));
         
-        var update = new JMenuItem("update");
-        update.addActionListener(this::doUpdate);
-        
         var popup = new JPopupMenu();
-        popup.add(update);
+        popup.add(createMenu("save", this::doSave, "Save current *program* to file"));
+        popup.add(createMenu("load", this::doLoad, "Load *program* from file"));
+        popup.addSeparator();
+        popup.add(createMenu("update", this::doUpdate, "Update status for debugging"));
         
         setComponentPopupMenu(popup);
+    }
+    
+    private void doSave(ActionEvent ev) {
+        var chooser = new FileChooser();
+        var file = chooser.getFileToSave(this);
+        if (file == null) {
+            return;
+        }
+
+        try (var out = new BufferedWriter(new FileWriter(file))) {
+            out
+            .append("JLogikus 100\n")
+            .append(LocalDateTime.now(ZoneOffset.UTC).toString() + "\n")
+            .append("connections:" + connections.size() + "\n");
+            
+            for (var connection : connections) {
+                out.append(connection.start().id()).append(" ").append(connection.end().id()).append("\n");
+            }            
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            Object[] message = {
+                    ex.getClass().getSimpleName(),
+                    ex.getMessage(),
+            };
+            showMessageDialog(this, message, ex.getClass().getSimpleName(), ERROR_MESSAGE);
+        }
+    }
+
+    private void doLoad(ActionEvent ev) {
+        // TODO
     }
     
     private void doUpdate(ActionEvent ev) {
@@ -205,6 +245,13 @@ public class LogikusPanel extends JComponent implements Module {
             connections.stream().filter(connection -> active.contains(connection.start())).forEach(Connection::active);
         }
         repaint();
+    }
+    
+    private JMenuItem createMenu(String text, ActionListener listener, String tooltip) {
+        var item = new JMenuItem(text);
+        item.setToolTipText(tooltip);
+        item.addActionListener(listener);
+        return item;
     }
     
     @Override
