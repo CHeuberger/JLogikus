@@ -22,14 +22,14 @@ public class Connection {
     }
 
     public void paintComponent(JComponent panel, Graphics2D gg) {
-        gg.setColor(settings.connectionColorBorder());
+        gg.setColor(active ? settings.connectionBorderAct() : settings.connectionBorderDeact());
         gg.setStroke(settings.connectionStrokeBorder());
         int x = start.getWidth() / 2 - 1;
         int y = start.getHeight() / 2 - 1;
         Point ps = SwingUtilities.convertPoint(start, x, y, panel);
         Point pe = SwingUtilities.convertPoint(end, x, y, panel);
         gg.drawLine(ps.x, ps.y, pe.x, pe.y);
-        gg.setColor(active ? settings.connectionColorAct() : settings.connectionColorDeact());
+        gg.setColor(settings.connectionColor());
         gg.setStroke(settings.connectionStroke());
         gg.drawLine(ps.x, ps.y, pe.x, pe.y);
     }
