@@ -6,7 +6,7 @@ import javax.swing.JComponent;
 
 public abstract class Component extends JComponent implements Module {
     
-    protected final Settings settings = Settings.INSTANCE;
+    protected final Settings settings = Settings.get();
     
     protected final String id;
     protected final Module parent;

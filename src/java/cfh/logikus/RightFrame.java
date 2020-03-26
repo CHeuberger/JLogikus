@@ -6,7 +6,7 @@ import javax.swing.JComponent;
 
 public class RightFrame extends JComponent {
 
-    private final Settings settings = Settings.INSTANCE;
+    private final Settings settings = Settings.get();
 
     public RightFrame() {
         setPreferredSize(settings.rightSize());

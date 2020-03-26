@@ -4,7 +4,7 @@ import java.util.Objects;
 
 public abstract class ModuleImpl implements Module {
 
-    protected Settings settings = Settings.INSTANCE;
+    protected Settings settings = Settings.get();
     
     protected final String id;
     protected final Module parent;

@@ -6,7 +6,7 @@ import javax.swing.JComponent;
 
 public class LeftFrame extends JComponent {
 
-    private final Settings settings = Settings.INSTANCE;
+    private final Settings settings = Settings.get();
     
     public LeftFrame() {
         setPreferredSize(settings.leftSize());

@@ -6,8 +6,10 @@ import java.awt.Dimension;
 import java.awt.Insets;
 
 public enum Settings {
-
-    INSTANCE;
+    
+    DEFAULT;
+    
+    public static Settings get() { return DEFAULT; }
     
     public Insets insets() { return new Insets(2, 2, 2, 2); }
     

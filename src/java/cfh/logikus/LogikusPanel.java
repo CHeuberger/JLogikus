@@ -34,7 +34,7 @@ public class LogikusPanel extends JComponent implements Module {
 
     private static final int META_KEYS = CTRL_DOWN_MASK + SHIFT_DOWN_MASK + ALT_DOWN_MASK;
     
-    private final Settings settings = Settings.INSTANCE;
+    private final Settings settings = Settings.get();
     
     private final Source source;
     private final List<Output> outputs;

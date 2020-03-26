@@ -9,7 +9,7 @@ import javax.swing.SwingUtilities;
 
 public class Connection {
 
-    private Settings settings = Settings.INSTANCE;
+    private Settings settings = Settings.get();
     
     private final Contact start;
     private final Contact end;
