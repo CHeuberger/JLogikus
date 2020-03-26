@@ -18,18 +18,24 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.LineNumberReader;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -189,26 +195,27 @@ public class LogikusPanel extends JComponent implements Module {
         popup.add(createMenu("save", this::doSave, "Save current *program* to file"));
         popup.add(createMenu("load", this::doLoad, "Load *program* from file"));
         popup.addSeparator();
+        popup.add(createMenu("clear", this::doClear, "Remove all connections"));
         popup.add(createMenu("update", this::doUpdate, "Update status for debugging"));
         
         setComponentPopupMenu(popup);
     }
     
     private void doSave(ActionEvent ev) {
-        var chooser = new FileChooser();
-        var file = chooser.getFileToSave(this);
+        var file = new FileChooser().getFileToSave(this);
         if (file == null) {
             return;
         }
 
         try (var out = new BufferedWriter(new FileWriter(file))) {
             out
-            .append("JLogikus 100\n")
+            .append("JLogikus\n")
+            .append("100\n")
             .append(LocalDateTime.now(ZoneOffset.UTC).toString() + "\n")
             .append("connections:" + connections.size() + "\n");
             
             for (var connection : connections) {
-                out.append(connection.start().id()).append(" ").append(connection.end().id()).append("\n");
+                out.append(connection.start().id()).append("--").append(connection.end().id()).append("\n");
             }            
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -221,13 +228,92 @@ public class LogikusPanel extends JComponent implements Module {
     }
 
     private void doLoad(ActionEvent ev) {
-        // TODO
+        var file = new FileChooser().getFileToLoad(this);
+        if (file == null) {
+            return;
+        }
+        
+        LineNumberReader input;
+        try {
+            input = new LineNumberReader(new FileReader(file));
+        } catch (FileNotFoundException ex) {
+            ex.printStackTrace();
+            Object[] message = {
+                    ex.getClass().getSimpleName(),
+                    ex.getMessage(),
+            };
+            showMessageDialog(this, message, ex.getClass().getSimpleName(), ERROR_MESSAGE);
+            return;
+        }
+        String line = "";
+        try (input) {
+            line = input.readLine();
+            if (!line.equals("JLogikus")) {
+                throw new IOException(input.getLineNumber() + ": unrecognized file header");
+            }
+            line = input.readLine();
+            if (!line.equals("100")) {
+                throw new IOException(input.getLineNumber() + ": unrecognized version \"" + line + "\"");
+            }
+            line = input.readLine();  // date time
+            line = input.readLine();
+            if (!line.startsWith("connections:")) {
+                throw new IOException(input.getLineNumber() + ": expected \"connections:\" but got \"" + line + "\"");
+            }
+            var count = Integer.parseInt(line.substring(12));
+            if (count < 0) {
+                throw new IOException(input.getLineNumber() + ": invalid number of connections \"" + line + "\"");
+            }
+            var list = new ArrayList<Connection>();
+            for (var i = 0; i < count; i++) {
+                line = input.readLine();
+                var tokens = line.split("--", 2);
+                if (tokens.length < 2) {
+                    throw new IOException(input.getLineNumber() + ": connection unparseable \"" + line + "\"");
+                }
+                var start = contactForId(tokens[0], input.getLineNumber());
+                var end = contactForId(tokens[1], input.getLineNumber());
+                if (start == end) {
+                    throw new IOException(input.getLineNumber() + ": connection to same contact not allowed \"" + line + "\"");
+                }
+                list.add(new Connection(start, end));
+            }
+            clear();
+            for (Connection connection : list) {
+                connections.add(connection);
+                connection.start().connected(connection);
+                connection.end().connected(connection);
+            }
+            update();
+        } catch (IOException | NumberFormatException | NoSuchElementException ex) {
+            ex.printStackTrace();
+            Object[] message = {
+                    ex.getClass().getSimpleName(),
+                    ex.getMessage(),
+                    input.getLineNumber() + ": " + line
+            };
+            showMessageDialog(this, message, ex.getClass().getSimpleName(), ERROR_MESSAGE);
+        }
+    }
+    
+    private void doClear(ActionEvent ev) {
+        if (showConfirmDialog(this, "Remove ALL connections?", "Confirm", OK_CANCEL_OPTION) == OK_OPTION) {
+            clear();
+        }
     }
     
     private void doUpdate(ActionEvent ev) {
         update();
     }
-        
+
+    private Contact contactForId(String id, int lineNumber) throws NoSuchElementException {
+        return contacts
+            .stream()
+            .filter(c -> c.id().equals(id))
+            .findAny()
+            .orElseThrow(() -> new NoSuchElementException(lineNumber + ": unknown contact \"" + id + "\""));
+    }
+    
     private void update() {
         synchronized (updateLock) {
             contacts.forEach(Contact::deactive);
@@ -245,6 +331,12 @@ public class LogikusPanel extends JComponent implements Module {
             connections.stream().filter(connection -> active.contains(connection.start())).forEach(Connection::active);
         }
         repaint();
+    }
+    
+    private void clear() {
+        connections.clear();
+        contacts().forEach(Contact::clear);
+        update();
     }
     
     private JMenuItem createMenu(String text, ActionListener listener, String tooltip) {

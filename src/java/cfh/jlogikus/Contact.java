@@ -51,6 +51,11 @@ public class Contact extends Component {
         return active;
     }
     
+    public void clear() {
+        connection = null;
+        active = false;
+    }
+    
     @Override
     public Stream<Contact> contacts() {
         return Stream.of(this);

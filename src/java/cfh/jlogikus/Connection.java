@@ -29,7 +29,7 @@ public class Connection {
         Point ps = SwingUtilities.convertPoint(start, x, y, panel);
         Point pe = SwingUtilities.convertPoint(end, x, y, panel);
         gg.drawLine(ps.x, ps.y, pe.x, pe.y);
-        gg.setColor(settings.connectionColor());
+        gg.setColor(active ? settings.connectionColorAct() : settings.connectionColorDeact());
         gg.setStroke(settings.connectionStroke());
         gg.drawLine(ps.x, ps.y, pe.x, pe.y);
     }

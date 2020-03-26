@@ -27,10 +27,11 @@ public class FileChooser extends JFileChooser {
         prefs = Preferences.userRoot().node("/" + classname.replace('.', '/'));
         String dir = prefs.get(PREF_DIR, ".");
         setCurrentDirectory(new File(dir));
+        setMultiSelectionEnabled(false);
     }
 
     public File getFileToSave(Component parent) {
-        if (showSaveDialog(getParent()) != JFileChooser.APPROVE_OPTION) {
+        if (showSaveDialog(getParent()) != APPROVE_OPTION) {
             return null;
         }
         File file = getSelectedFile();
@@ -45,6 +46,13 @@ public class FileChooser extends JFileChooser {
             file.renameTo(bak);
         }
         return file;
+    }
+    
+    public File getFileToLoad(Component parent) {
+        if (showOpenDialog(parent) != APPROVE_OPTION) {
+            return null;
+        }
+        return getSelectedFile();
     }
 
     @Override

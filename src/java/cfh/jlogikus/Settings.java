@@ -35,9 +35,10 @@ public enum Settings {
     public Color buttonColor() { return new Color(0xA0, 0x00, 0x00, 0xFF); }
     public Color buttonPressed() { return new Color(0xD0, 0x00, 0x00, 0xFF); }
 
-    public Color connectionColor() { return new Color(0x50, 0x50, 0xFF, 0xD0); }
-    public Color connectionBorderDeact() { return connectionColor().darker(); }
-    public Color connectionBorderAct() { return connectionColor().brighter(); }  // new Color(0x90, 0x90, 0xFF, 0xE0)
-    public BasicStroke connectionStroke() { return new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND); }
+    public Color connectionColorDeact() { return new Color(0x40, 0x40, 0xFF, 0xC0); }
+    public Color connectionColorAct() { return new Color(0x20, 0x20, 0xFF, 0xC0); }
+    public Color connectionBorderDeact() { return connectionColorDeact().darker(); }
+    public Color connectionBorderAct() { return new Color(0xF0, 0x60, 0xA0, 0xC0); }
+    public BasicStroke connectionStroke() { return new BasicStroke(4, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND); }
     public BasicStroke connectionStrokeBorder() { return new BasicStroke(7, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND); }
 }
