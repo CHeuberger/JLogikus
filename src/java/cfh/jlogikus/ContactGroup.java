@@ -59,6 +59,8 @@ public abstract class ContactGroup extends Component {
         }
     }
     
+    //------------------------------------------------------------------------------------------------------------------
+
     public static class Vertical extends ContactGroup {
         public Vertical(String id, Module parent) {
             super(id, parent);

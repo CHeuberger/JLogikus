@@ -120,7 +120,8 @@ public class LogikusPanel extends JComponent implements Module {
         
         // switches
         y = 3;
-        add(push.group(), new GridBagConstraints(0, y, 1, 1, 0.0, 0.0, NORTH, NONE, insets, 0, 0));
+        var gap = settings.pushContactGap();
+        add(push.group(), new GridBagConstraints(0, y, 1, 1, 0.0, 0.0, NORTH, NONE, insets, 0, gap));
         for (var toggle : toggles) {
             add(toggle.contactPanel(), new GridBagConstraints(RELATIVE, y, 1, 1, 0.0, 0.0, CENTER, VERTICAL, insets , 0, 0));
         }

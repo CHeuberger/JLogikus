@@ -29,7 +29,6 @@ public enum Settings {
     public static Settings get() { return DEFAULT; }
     
     public Insets insets() { return new Insets(1, 1, 1, 1); }
-    public Insets insetsVertical() { return new Insets(1, 1, 41, 1); }
     
     public int laneCount() { return 10; }
     public int switchCount() { return 5; }
@@ -60,6 +59,8 @@ public enum Settings {
     public BasicStroke connectionStroke() { return new BasicStroke(4, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND); }
     public BasicStroke connectionStrokeBorder() { return new BasicStroke(7, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND); }
     
+    public int pushContactGap() { return 40; }
+    
     private static int shrink(int value, float rate) {
         return Math.round(value * rate);
     }
@@ -69,4 +70,5 @@ public enum Settings {
         dimension.height = shrink(dimension.height, rate);
         return dimension;
     }
+
 }

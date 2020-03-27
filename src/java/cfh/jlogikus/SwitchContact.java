@@ -69,6 +69,8 @@ public abstract class SwitchContact extends Component {
         }
     }
     
+    //------------------------------------------------------------------------------------------------------------------
+    
     public static class Vertical extends SwitchContact {
         public Vertical(String id, Module parent) {
             super(id, parent);
@@ -79,10 +81,10 @@ public abstract class SwitchContact extends Component {
         }
         @Override
         protected void populate() {
-            var insets = settings.insetsVertical();
+            var insets = settings.insets();
             setLayout(new GridBagLayout());
-            add(contact1, new GridBagConstraints(0, 0, 1, 1, 0.0, 1.0, NORTH, VERTICAL, insets, 0, 0));
-            add(contact2, new GridBagConstraints(0, 1, 1, 1, 0.0, 1.0, SOUTH, VERTICAL, insets, 0, 0));
+            add(contact1, new GridBagConstraints(0, 0, 1, 1, 0.0, 1.0, NORTH, NONE, insets, 0, 0));
+            add(contact2, new GridBagConstraints(0, 1, 1, 1, 0.0, 1.0, NORTH, NONE, insets, 0, 0));
         }
     }
 }
