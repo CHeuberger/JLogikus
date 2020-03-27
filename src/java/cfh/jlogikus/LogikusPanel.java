@@ -18,12 +18,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.LineNumberReader;
+import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
@@ -221,15 +220,24 @@ public class LogikusPanel extends JComponent implements Module {
             return;
         }
 
-        try (var out = new BufferedWriter(new FileWriter(file))) {
+        try (var out = new PrintWriter(file)) {
             out
-            .append("JLogikus\n")
-            .append("100\n")
-            .append(LocalDateTime.now(ZoneOffset.UTC).toString() + "\n")
-            .append("connections:" + connections.size() + "\n");
+            .printf("JLogikus\n")
+            .printf("101\n")
+            .printf("%s\n", LocalDateTime.now(ZoneOffset.UTC));
+
+            // 101
+            out.printf("outputs:%d\n", outputs.size());
+            outputs.stream().map(Output::label).map(EditableLabel::getText).forEach(s -> out.printf("%s\n", s));
             
+            // 101
+            out.printf("toggles:%d\n", toggles.size());
+            toggles.stream().map(ToggleLane::label).map(EditableLabel::getText).forEach(s -> out.printf("%s\n", s));
+            
+            // 101,100
+            out.printf("connections:%d\n", connections.size());
             for (var connection : connections) {
-                out.append(connection.start().id()).append(" ~ ").append(connection.end().id()).append("\n");
+                out.printf("%s ~ %s\n", connection.start().id(), connection.end().id());
             }            
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -262,22 +270,36 @@ public class LogikusPanel extends JComponent implements Module {
         String line = "";
         try (input) {
             line = input.readLine();
-            if (!line.equals("JLogikus")) {
+            if (!line.equals("JLogikus"))
                 throw new IOException(input.getLineNumber() + ": unrecognized file header");
-            }
             line = input.readLine();
-            if (!line.equals("100")) {
+            if (!List.of("101", "100").contains(line))
                 throw new IOException(input.getLineNumber() + ": unrecognized version \"" + line + "\"");
-            }
+            var version = Integer.parseInt(line);
+            
             line = input.readLine();  // date time
-            line = input.readLine();
-            if (!line.startsWith("connections:")) {
-                throw new IOException(input.getLineNumber() + ": expected \"connections:\" but got \"" + line + "\"");
+
+            if (version > 100) {
+                var count = loadCount(input, "outputs:");
+                if (count != outputs.size())
+                    throw new IOException(input.getLineNumber() + ": invalid output count " + count + " in \"" + line + "\"");
+                for (var output : outputs) {
+                    output.label().setText(input.readLine());
+                }
             }
-            var count = Integer.parseInt(line.substring(12));
-            if (count < 0) {
+            
+            if (version > 100) {
+                var count = loadCount(input, "toggles:");
+                if (count != toggles.size())
+                    throw new IOException(input.getLineNumber() + ": invalid toggle count " + count + " in \"" + line + "\"");
+                for (var toggle : toggles) {
+                    toggle.label().setText(input.readLine());
+                }
+            }
+            
+            var count = loadCount(input, "connections:");
+            if (count < 0)
                 throw new IOException(input.getLineNumber() + ": invalid number of connections \"" + line + "\"");
-            }
             var list = new ArrayList<Connection>();
             for (var i = 0; i < count; i++) {
                 line = input.readLine();
@@ -298,6 +320,7 @@ public class LogikusPanel extends JComponent implements Module {
                 connection.start().connected(connection);
                 connection.end().connected(connection);
             }
+            
             update();
         } catch (IOException | NumberFormatException | NoSuchElementException ex) {
             ex.printStackTrace();
@@ -308,6 +331,14 @@ public class LogikusPanel extends JComponent implements Module {
             };
             showMessageDialog(this, message, ex.getClass().getSimpleName(), ERROR_MESSAGE);
         }
+    }
+    
+    private int loadCount(LineNumberReader input, String key) throws IOException {
+        var line = input.readLine();
+        if (!line.startsWith(key))
+            throw new IOException(String.format("%d: expected \"%s\" but got \"%s\"", input.getLineNumber(), key, line));
+        var count = Integer.parseInt(line.substring(key.length()));
+        return count;
     }
     
     private void doClear(ActionEvent ev) {

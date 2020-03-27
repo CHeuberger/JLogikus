@@ -1,6 +1,28 @@
 JLogikus
-100
-2020-03-27T14:02:47.723948900
+101
+2020-03-27T22:01:00.430790500
+outputs:10
+L0
+L1
+L2
+L3
+L4
+L5
+L6
+L7
+L8
+L9
+toggles:10
+S0
+S1
+S2
+S3
+S4
+S5
+S6
+S7
+S8
+S9
 connections:4
 Q₁ ~ S2Da₂
 Q₃ ~ S2Ca₂
