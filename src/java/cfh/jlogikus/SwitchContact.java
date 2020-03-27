@@ -80,7 +80,8 @@ public abstract class SwitchContact extends Component {
         }
         @Override
         protected void populate() {
-            setLayout(new GridLayout(0, 1));
+            var gap = settings.verticalSwitch();
+            setLayout(new GridLayout(0, 1, 0, gap));
             add(contact1);
             add(contact2);
         }

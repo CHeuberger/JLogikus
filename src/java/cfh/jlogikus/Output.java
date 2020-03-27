@@ -10,7 +10,7 @@ public class Output extends ModuleImpl {
     public Output(String id, Module module) {
         super(id, module);
         
-        lamp = new LampFrame(id + "f", this);
+        lamp = new LampFrame(id + "l", this);
         group = new ContactGroup.Horizontal(id, this);
     }
     

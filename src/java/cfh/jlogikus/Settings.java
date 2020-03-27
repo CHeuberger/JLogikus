@@ -12,6 +12,8 @@ public enum Settings {
         @Override public Insets insets() { return new Insets(0, 0, 0, 0); }
 //        @Override public int groupBorder() { return super.groupBorder()-1; }
 
+        @Override public int verticalSwitch() { return shrink(super.verticalSwitch(), 0.8F); }
+        
         @Override public Dimension leftSize() { return shrink(super.leftSize(), 0.8F); }
         @Override public Dimension lampSize() { return shrink(super.lampSize(), 0.8F); }
         @Override public Dimension rightSize() { return shrink(super.rightSize(), 0.8F); }
@@ -35,6 +37,8 @@ public enum Settings {
     
     public int groupCount() { return 3; }
     public int groupBorder() { return 3; }
+
+    public int verticalSwitch() { return 40; }
 
     public Dimension leftSize() { return new Dimension(40, 150); }
     public Dimension lampSize() { return new Dimension(100, 150); }

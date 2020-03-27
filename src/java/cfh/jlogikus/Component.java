@@ -14,6 +14,8 @@ public abstract class Component extends JComponent implements Module {
     protected Component(String id, Module parent) {
         this.id = Objects.requireNonNull(id);
         this.parent = Objects.requireNonNull(parent);
+        
+        setToolTipText(id);
     }
     
     @Override
