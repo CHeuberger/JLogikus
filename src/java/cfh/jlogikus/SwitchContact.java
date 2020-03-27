@@ -4,7 +4,6 @@ import static java.awt.GridBagConstraints.*;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.util.stream.Stream;
 
 public abstract class SwitchContact extends Component {
@@ -80,10 +79,10 @@ public abstract class SwitchContact extends Component {
         }
         @Override
         protected void populate() {
-            var gap = settings.verticalSwitch();
-            setLayout(new GridLayout(0, 1, 0, gap));
-            add(contact1);
-            add(contact2);
+            var insets = settings.insetsVertical();
+            setLayout(new GridBagLayout());
+            add(contact1, new GridBagConstraints(0, 0, 1, 1, 0.0, 1.0, NORTH, VERTICAL, insets, 0, 0));
+            add(contact2, new GridBagConstraints(0, 1, 1, 1, 0.0, 1.0, SOUTH, VERTICAL, insets, 0, 0));
         }
     }
 }

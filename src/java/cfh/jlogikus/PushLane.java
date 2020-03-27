@@ -8,6 +8,7 @@ public class PushLane extends ModuleImpl {
 
     private final SwitchContact group;
     private final Button button;
+    private final Label label;
     
     public PushLane(String id, Module parent) {
         super(id, parent);
@@ -15,6 +16,7 @@ public class PushLane extends ModuleImpl {
         group = new SwitchContact.Vertical(id, this);
         group.setBorder(BorderFactory.createRaisedSoftBevelBorder());
         button = new Button.Push(id + "+", this);
+        label = new Label(id);
     }
     
     public SwitchContact group() {
@@ -23,6 +25,10 @@ public class PushLane extends ModuleImpl {
     
     public Button button() {
         return button;
+    }
+    
+    public Label label() {
+        return label;
     }
     
     @Override

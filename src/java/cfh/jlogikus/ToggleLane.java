@@ -17,20 +17,22 @@ public class ToggleLane extends ModuleImpl {
     
     private final List<ToggleContacts> contacts;
     private final Button button;
-    
+    private final EditableLabel label;
+
     private final JComponent contactPanel;
     
     public ToggleLane(String id, Module parent) {
         super(id, parent);
         
-        this.contacts = unmodifiableList(
+        contacts = unmodifiableList(
             IntStream.range(0, settings.switchCount())
             .map(i -> 'A' + i*2)
             .mapToObj(s -> new ToggleContacts(id + (char)s + (char)(s+1=='J'?'K':s+1), this))
             .collect(toList())
             );
-        this.button = new Button.Toggle(id + "+", this);
-        this.contactPanel = new JPanel();
+        button = new Button.Toggle(id + "+", this);
+        label = new EditableLabel(id);
+        contactPanel = new JPanel();
         
         contactPanel.setLayout(new GridBagLayout());
         var insets = settings.insets();
@@ -45,6 +47,10 @@ public class ToggleLane extends ModuleImpl {
     
     public Button button() {
         return button;
+    }
+    
+    public EditableLabel label() {
+        return label;
     }
     
     @Override
