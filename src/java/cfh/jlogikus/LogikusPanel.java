@@ -18,7 +18,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -35,7 +34,6 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -47,7 +45,7 @@ import javax.swing.JPopupMenu;
 import cfh.FileChooser;
 
 public class LogikusPanel extends JComponent implements Module {
-
+    
     private static final int META_KEYS = CTRL_DOWN_MASK + SHIFT_DOWN_MASK + ALT_DOWN_MASK;
     
     private final Settings settings = Settings.get();

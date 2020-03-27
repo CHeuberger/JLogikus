@@ -9,7 +9,9 @@ Prototype can be downloaded under [releases](https://github.com/CHeuberger/JLogi
 * [Kosmos-Logikus](https://de.wikipedia.org/wiki/Logikus) - Wikipedia German.
 * [Repository](https://github.com/CHeuberger/JLogikus) - the repository.
 
-# History
+# Changes
 
+* `0.0.2`
+  * Save and Load
 * `0.0.1`
-  Prototype
+  * Prototype

@@ -28,7 +28,7 @@ public enum Settings {
         @Override public BasicStroke connectionStrokeBorder() { return new BasicStroke(6, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND); }
     };
     
-    public static Settings get() { if (false) return DEFAULT; return SMALL; }
+    public static Settings get() { return DEFAULT; }
     
     public Insets insets() { return new Insets(2, 2, 2, 2); }
     
