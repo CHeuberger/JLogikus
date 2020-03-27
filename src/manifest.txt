@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Implementation-Name: Logikus Emulator
-Implementation-Version: 0.0.2
+Implementation-Version: 0.0.3
 Implementation-Vendor: Carlos Heuberger
-Main-Class: cfh.jlogikus.TestGUI
+Main-Class: cfh.jlogikus.GUI
 
