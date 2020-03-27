@@ -1,0 +1,14 @@
+JLogikus
+100
+2020-03-27T14:10:02.952901700
+connections:10
+Q₁ ~ S2Da₂
+Q₃ ~ S2Ca₂
+S2Cb₁ ~ S3Ba₃
+S2Cb₂ ~ S3Ca₂
+S2Db₂ ~ S3Da₂
+S2Db₃ ~ S3Ea₁
+S3Db₂ ~ L2₂
+S3Bb₂ ~ L3₂
+S3Cb₂ ~ L4₂
+S3Eb₂ ~ L5₂

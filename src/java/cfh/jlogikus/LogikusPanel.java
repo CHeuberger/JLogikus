@@ -192,8 +192,8 @@ public class LogikusPanel extends JComponent implements Module {
         contacts.forEach(c -> c.addMouseListener(adapter));
         
         var popup = new JPopupMenu();
-        popup.add(createMenu("save", this::doSave, "Save current *program* to file"));
         popup.add(createMenu("load", this::doLoad, "Load *program* from file"));
+        popup.add(createMenu("save", this::doSave, "Save current *program* to file"));
         popup.addSeparator();
         popup.add(createMenu("clear", this::doClear, "Remove all connections"));
         popup.add(createMenu("update", this::doUpdate, "Update status for debugging"));
@@ -215,7 +215,7 @@ public class LogikusPanel extends JComponent implements Module {
             .append("connections:" + connections.size() + "\n");
             
             for (var connection : connections) {
-                out.append(connection.start().id()).append("--").append(connection.end().id()).append("\n");
+                out.append(connection.start().id()).append(" ~ ").append(connection.end().id()).append("\n");
             }            
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -267,7 +267,7 @@ public class LogikusPanel extends JComponent implements Module {
             var list = new ArrayList<Connection>();
             for (var i = 0; i < count; i++) {
                 line = input.readLine();
-                var tokens = line.split("--", 2);
+                var tokens = line.split(" *~ *", 2);
                 if (tokens.length < 2) {
                     throw new IOException(input.getLineNumber() + ": connection unparseable \"" + line + "\"");
                 }

@@ -11,7 +11,7 @@ public class Output extends ModuleImpl {
         super(id, module);
         
         lamp = new LampFrame(id + "f", this);
-        group = new ContactGroup.Horizontal(id + "_", this);
+        group = new ContactGroup.Horizontal(id, this);
     }
     
     public LampFrame lamp() {

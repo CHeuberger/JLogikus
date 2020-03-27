@@ -59,7 +59,7 @@ public abstract class SwitchContact extends Component {
         }
         @Override
         protected ContactGroup createContact(String id) {
-            return new ContactGroup.Vertical(id + "_", parent);
+            return new ContactGroup.Vertical(id, parent);
         }
         @Override
         protected void populate() {
@@ -76,7 +76,7 @@ public abstract class SwitchContact extends Component {
         }
         @Override
         protected ContactGroup createContact(String id) {
-            return new ContactGroup.Horizontal(id + "_", parent);
+            return new ContactGroup.Horizontal(id, parent);
         }
         @Override
         protected void populate() {

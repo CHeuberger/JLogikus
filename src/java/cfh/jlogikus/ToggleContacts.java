@@ -21,8 +21,8 @@ public class ToggleContacts extends ModuleImpl {
     
     public ToggleContacts(String id, Module parent) {
         super(id, parent);
-        var id1 = id.length()>=2 ? id.substring(0, id.length()-1) : id + "A";
-        var id2 = id.length()>=2 ? id.substring(0,  id.length()-2)+id.charAt(id.length()-1) : id + "B";
+        var id1 = id.length()>=2 ? id.substring(0, id.length()-1) : id + "X";
+        var id2 = id.length()>=2 ? id.substring(0,  id.length()-2)+id.charAt(id.length()-1) : id + "Y";
         open = new SwitchContact.Horizontal(id1, this);
         closed = new SwitchContact.Horizontal(id2, this);
         toggle(false);

@@ -26,7 +26,7 @@ public class ToggleLane extends ModuleImpl {
         this.contacts = unmodifiableList(
             IntStream.range(0, settings.switchCount())
             .map(i -> 'A' + i*2)
-            .mapToObj(s -> new ToggleContacts(id + (char)s + (char)(s+1), this))
+            .mapToObj(s -> new ToggleContacts(id + (char)s + (char)(s+1=='J'?'K':s+1), this))
             .collect(toList())
             );
         this.button = new Button.Toggle(id + "+", this);

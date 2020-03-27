@@ -16,12 +16,12 @@ public abstract class ContactGroup extends Component {
     private final List<Contact> contacts;
     
     private ContactGroup(String id, Module parent) {
-        super(id, parent);
+        super(id + "_", parent);
         
         this.contacts = unmodifiableList(
             IntStream
             .range(0, settings.groupCount())
-            .mapToObj(i -> new Contact(id + i, this))
+            .mapToObj(i -> new Contact(id + (char)('\u2081'+i), this))  // \u2018 == ₁ (subscript 1)
             .collect(toList())
             );
 

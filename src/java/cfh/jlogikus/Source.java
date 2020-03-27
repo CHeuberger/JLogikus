@@ -9,7 +9,7 @@ public class Source extends ModuleImpl {
     public Source(String id, Module parent) {
         super(id, parent);
         
-        group = new ContactGroup.Horizontal(id + "_", this);
+        group = new ContactGroup.Horizontal(id, this);
     }
     
     public ContactGroup group() {

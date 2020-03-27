@@ -7,9 +7,26 @@ import java.awt.Insets;
 
 public enum Settings {
     
-    DEFAULT;
+    DEFAULT,
+    SMALL {
+        @Override public Insets insets() { return new Insets(0, 0, 0, 0); }
+//        @Override public int groupBorder() { return super.groupBorder()-1; }
+
+        @Override public Dimension leftSize() { return shrink(super.leftSize(), 0.8F); }
+        @Override public Dimension lampSize() { return shrink(super.lampSize(), 0.8F); }
+        @Override public Dimension rightSize() { return shrink(super.rightSize(), 0.8F); }
+        
+        @Override public Dimension contactSize() { return shrink(super.contactSize(), 0.9F); }
+//        @Override public int contactRadius() {return super.contactRadius()-1; }
+        
+        @Override public Dimension buttonSize() { return shrink(super.buttonSize(), 0.8F); }
+        @Override public int buttonSlide() { return shrink(super.buttonSlide(), 0.8F); }
+
+        @Override public BasicStroke connectionStroke() { return new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND); }
+        @Override public BasicStroke connectionStrokeBorder() { return new BasicStroke(6, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND); }
+    };
     
-    public static Settings get() { return DEFAULT; }
+    public static Settings get() { if (false) return DEFAULT; return SMALL; }
     
     public Insets insets() { return new Insets(2, 2, 2, 2); }
     
@@ -23,7 +40,7 @@ public enum Settings {
     public Dimension lampSize() { return new Dimension(100, 150); }
     public Dimension rightSize() { return new Dimension(40, 150); }
     public Color displayFrame() { return new Color(0x40, 0x20, 0x00, 0xFF); }
-    public Color lampLight() { return new Color(0xC0, 0x60, 0x20, 0xFF); }
+    public Color lampLight() { return new Color(0xE0, 0xA0, 0x80, 0xFF); }
     
     
     public Dimension contactSize() { return new Dimension(10, 10); }
@@ -41,4 +58,14 @@ public enum Settings {
     public Color connectionBorderAct() { return new Color(0xF0, 0x60, 0xA0, 0xC0); }
     public BasicStroke connectionStroke() { return new BasicStroke(4, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND); }
     public BasicStroke connectionStrokeBorder() { return new BasicStroke(7, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND); }
+    
+    private static int shrink(int value, float rate) {
+        return Math.round(value * rate);
+    }
+    
+    private static Dimension shrink(Dimension dimension, float rate) {
+        dimension.width = shrink(dimension.width, rate);
+        dimension.height = shrink(dimension.height, rate);
+        return dimension;
+    }
 }
