@@ -99,29 +99,29 @@ public class LogikusPanel extends JComponent implements Module {
         // Display
         add(new LeftFrame(), new GridBagConstraints(0, y, 1, 1, 0.0, 0.0, SOUTHEAST, HORIZONTAL, insets, 0, 0));
         for (var output : outputs) {
-            add(output.lamp(), new GridBagConstraints(RELATIVE, y, 1, 1, 1.0, 0.5, SOUTH, HORIZONTAL, insets, 0, 0));
+            add(output.lamp(), new GridBagConstraints(RELATIVE, y, 1, 1, 1.0, 0.0, SOUTH, HORIZONTAL, insets, 0, 0));
         }
         add(new RightFrame(), new GridBagConstraints(RELATIVE, y, REMAINDER, 1, 0.0, 0.0, SOUTHWEST, HORIZONTAL, insets, 0, 0));
         
         // Source, Output
         y = 1;
-        add(source.group(), new GridBagConstraints(0, y, 1, 1, 0.0, 0.0, NORTH, NONE, insets, 0, 0));
+        add(source.group(), new GridBagConstraints(0, y, 1, 1, 0.0, 1.0, NORTH, NONE, insets, 0, 0));
         for (var output : outputs) {
-            add(output.group(), new GridBagConstraints(RELATIVE, y, 1, 1, 1.0, 0.0, NORTH, NONE, insets, 0, 0));
+            add(output.group(), new GridBagConstraints(RELATIVE, y, 1, 1, 1.0, 1.0, NORTH, NONE, insets, 0, 0));
         }
         
         // switches
         y = 2;
-        add(push.group(), new GridBagConstraints(0, y, 1, 1, 0.0, 1.0, NORTH, NONE, insets, 0, 0));
+        add(push.group(), new GridBagConstraints(0, y, 1, 1, 0.0, 0.5, NORTH, NONE, insets, 0, 0));
         for (var toggle : toggles) {
-            add(toggle.contactPanel(), new GridBagConstraints(RELATIVE, y, 1, 1, 0.0, 0.0, CENTER, VERTICAL, insets , 0, 0));
+            add(toggle.contactPanel(), new GridBagConstraints(RELATIVE, y, 1, 1, 0.0, 1.0, CENTER, VERTICAL, insets , 0, 0));
         }
         
         // buttons
         y = 3;
-        add(push.button(), new GridBagConstraints(0, y, 1, 1, 0.0, 0.0, SOUTH, NONE, insets, 0, 0));
+        add(push.button(), new GridBagConstraints(0, y, 1, 1, 0.0, 1.0, SOUTH, NONE, insets, 0, 0));
         for (var toggle : toggles) {
-            add(toggle.button(), new GridBagConstraints(RELATIVE, y, 1, 1, 0.0, 0.0, SOUTH, NONE, insets , 0, 0));
+            add(toggle.button(), new GridBagConstraints(RELATIVE, y, 1, 1, 0.0, 1.0, SOUTH, NONE, insets , 0, 0));
         }
         
         var adapter = new MouseAdapter() {
