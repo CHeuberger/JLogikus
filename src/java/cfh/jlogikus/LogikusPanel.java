@@ -14,6 +14,7 @@ import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -40,6 +41,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
 
 import cfh.FileChooser;
 
@@ -55,10 +57,13 @@ public class LogikusPanel extends JComponent implements Module {
     private final List<ToggleLane> toggles;
     
     private final List<Connection> connections;
+    private final List<Contact> contacts;
 
     private final transient Object updateLock = new Object();
-    private final transient List<Contact> contacts;
-
+    
+    private transient volatile Point startTrack = null;
+    private transient volatile Point endTrack = null;
+    
     public LogikusPanel() {
         source = new Source("Q", this);
         outputs = unmodifiableList(
@@ -140,22 +145,19 @@ public class LogikusPanel extends JComponent implements Module {
         }
         
         var adapter = new MouseAdapter() {
-            private final transient Cursor cursor = Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR);
-            private Cursor previous = null;
             private Contact start = null;
+            private final transient Cursor def = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
+            private final transient Cursor cross = Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR);
+            private final transient Cursor hand = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
             @Override
             public void mouseEntered(MouseEvent ev) {
                 if (ev.getComponent() instanceof Contact && !((Contact)ev.getComponent()).isConnected()) {
-                    previous = getCursor();
-                    setCursor(cursor);
+                    setCursor(start==null ? hand : hand);
                 }
             }
             @Override
             public void mouseExited(MouseEvent ev) {
-                if (previous != null) {
-                    setCursor(previous);
-                    previous = null;
-                }
+                setCursor(start==null ? def : cross);
             }
             @Override
             public void mouseClicked(MouseEvent ev) {
@@ -167,22 +169,22 @@ public class LogikusPanel extends JComponent implements Module {
                             if (metaKeys == 0) {
                                 if (!contact.isConnected()) {
                                     if (start == null) {
-                                        start = contact;
+                                        setStart(contact, ev.getPoint());
                                     } else if (contact == start) {
-                                        start = null;
+                                        setStart(null, ev.getPoint());
                                     } else {
                                         mouseExited(ev);
                                         Connection connection = new Connection(start, contact);
                                         connections.add(connection);
                                         start.connected(connection);
                                         contact.connected(connection);
-                                        start = null;
+                                        setStart(null, ev.getPoint());
                                         update();
                                     }
                                 }
                             } else if (metaKeys == CTRL_DOWN_MASK) {
                                 if (start == null) {
-                                    start = contact;
+                                    setStart(contact, ev.getPoint());
                                 } else {
                                     var connection = contact.connection();
                                     if (connection != null) {
@@ -194,15 +196,42 @@ public class LogikusPanel extends JComponent implements Module {
                                             }
                                         }
                                     }
-                                    start = null;
+                                    setStart(contact, ev.getPoint());
                                 }
                             }
                         }
                     }
                 }
             }
+            @Override
+            public void mouseMoved(MouseEvent ev) {
+                if (start != null) {
+                    endTrack = SwingUtilities.convertPoint(ev.getComponent(), ev.getPoint(), LogikusPanel.this);
+                    repaint();
+                }
+            }
+            private void setStart(Contact contact, Point point) {
+                start = contact;
+                if (start != null) {
+                    startTrack = SwingUtilities.convertPoint(contact, contact.getWidth()/2-1, contact.getHeight()/2-1, LogikusPanel.this);
+                } else {
+                    startTrack = null;
+                }
+                endTrack = null;
+            }
         };
         contacts.forEach(c -> c.addMouseListener(adapter));
+        contacts.forEach(c -> c.addMouseMotionListener(adapter));
+        
+        addMouseMotionListener(new MouseAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent ev) {
+                if (startTrack != null) {
+                    endTrack = ev.getPoint();
+                    repaint();
+                }
+            }
+        });
         
         var popup = new JPopupMenu();
         popup.add(createMenu("load", this::doLoad, "Load *program* from file"));
@@ -213,7 +242,7 @@ public class LogikusPanel extends JComponent implements Module {
         
         setComponentPopupMenu(popup);
     }
-    
+
     private void doSave(ActionEvent ev) {
         var file = new FileChooser().getFileToSave(this);
         if (file == null) {
@@ -304,9 +333,8 @@ public class LogikusPanel extends JComponent implements Module {
             for (var i = 0; i < count; i++) {
                 line = input.readLine();
                 var tokens = line.split(" *~ *", 2);
-                if (tokens.length < 2) {
+                if (tokens.length < 2)
                     throw new IOException(input.getLineNumber() + ": connection unparseable \"" + line + "\"");
-                }
                 var start = contactForId(tokens[0], input.getLineNumber());
                 var end = contactForId(tokens[1], input.getLineNumber());
                 if (start == end) {
@@ -398,6 +426,11 @@ public class LogikusPanel extends JComponent implements Module {
         var gg = (Graphics2D) g.create();
         try {
             connections.forEach(c -> c.paintComponent(this, gg));
+            
+            if (startTrack != null && endTrack != null) {
+                g.setColor(settings.connectionColorDeact());
+                g.drawLine(startTrack.x, startTrack.y, endTrack.x, endTrack.y);
+            }
         } finally {
             gg.dispose();
         }
