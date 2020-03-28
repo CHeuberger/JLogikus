@@ -6,6 +6,5 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" path="src/java"/>
-	<classpathentry kind="src" path="src/test"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>
