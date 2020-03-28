@@ -34,10 +34,10 @@ public class Connection {
         gg.drawLine(ps.x, ps.y, pe.x, pe.y);
     }
 
-    public Stream<Contact> connected() {
+    public Stream<ContactGroup> connected() {
         return Stream.concat(
-            start.connected(start),
-            end.connected(end)
+            start.group().connected(start),
+            end.group().connected(end)
             );
     }
     

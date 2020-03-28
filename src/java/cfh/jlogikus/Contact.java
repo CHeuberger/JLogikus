@@ -7,7 +7,6 @@ import java.util.stream.Stream;
 public class Contact extends Component {
     
     private transient Connection connection = null;
-    private transient boolean active = false;
 
     public Contact(String id, ContactGroup group) {
         super(id, group);
@@ -27,8 +26,8 @@ public class Contact extends Component {
         connection = null;
     }
     
-    public void connected(Connection connection) {
-        this.connection = Objects.requireNonNull(connection);
+    public void connected(Connection to) {
+        this.connection = Objects.requireNonNull(to);
     }
     
     public boolean isConnected() {
@@ -39,30 +38,23 @@ public class Contact extends Component {
         return connection;
     }
     
-    public void deactive() {
-        active = false;
-    }
-    
-    public void active() {
-        active = true;
-    }
-    
-    public boolean isActive() {
-        return active;
-    }
-    
     public void clear() {
         connection = null;
-        active = false;
+    }
+    
+    public ContactGroup group() {
+        return (ContactGroup) parent;
     }
     
     @Override
-    public Stream<Contact> contacts() {
-        return Stream.of(this);
+    public Stream<ContactGroup> groups() {
+        throw new RuntimeException("not implemented");
+//        return parent.groups();
     }
     
     @Override
-    public Stream<Contact> connected(Contact contact) {
-        return parent.connected(contact);
+    public Stream<ContactGroup> connected(Contact contact) {
+        throw new RuntimeException("not implemented");
+//        return parent.connected(contact);
     }
 }

@@ -15,6 +15,8 @@ public abstract class ContactGroup extends Component {
     
     private final List<Contact> contacts;
     
+    private transient boolean active = false;
+    
     private ContactGroup(String id, Module parent) {
         super(id + "_", parent);
         
@@ -31,13 +33,17 @@ public abstract class ContactGroup extends Component {
         contacts.forEach(this::add);
     }
 
-    @Override
     public Stream<Contact> contacts() {
         return contacts.stream();
     }
     
     @Override
-    public Stream<Contact> connected(Contact contact) {
+    public Stream<ContactGroup> groups() {
+        return Stream.of(this);
+    }
+    
+    @Override
+    public Stream<ContactGroup> connected(Contact contact) {
         if (contacts.contains(contact)) {
             return parent.connected(contact);
         } else {
@@ -45,6 +51,23 @@ public abstract class ContactGroup extends Component {
         }
     }
     
+    public void deactive() {
+        active = false;
+    }
+    
+    public void active() {
+        active = true;
+    }
+    
+    public boolean isActive() {
+        return active;
+    }
+    
+    public void clear() {
+        contacts.forEach(Contact::clear);
+        active = false;
+    }
+
     protected abstract LayoutManager createLayout();
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

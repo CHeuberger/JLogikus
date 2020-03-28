@@ -23,12 +23,12 @@ public class Source extends ModuleImpl {
     }
     
     @Override
-    public Stream<Contact> contacts() {
-        return group.contacts();
+    public Stream<ContactGroup> groups() {
+        return Stream.of(group);
     }
     
     @Override
-    public Stream<Contact> connected(Contact contact) {
-        return contacts();
+    public Stream<ContactGroup> connected(Contact contact) {
+        return groups();
     }
 }

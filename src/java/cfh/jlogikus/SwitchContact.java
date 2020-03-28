@@ -23,31 +23,24 @@ public abstract class SwitchContact extends Component {
     }
     
     @Override
-    public Stream<Contact> contacts() {
-        return Stream.concat(
-            contact1.contacts(),
-            contact2.contacts());
+    public Stream<ContactGroup> groups() {
+        return Stream.of(contact1, contact2);
     }
     
     @Override
-    public Stream<Contact> connected(Contact contact) {
+    public Stream<ContactGroup> connected(Contact contact) {
         if (closed) {
-            return contacts();
+            return groups();
         } else {
-            return Stream
-                .of(contact1, contact2)
-                .filter(g -> g.contacts().anyMatch(c -> c.equals(contact)))
-                .findAny()
-                .map(ContactGroup::contacts)
-                .orElse(Stream.empty());
+            return groups().filter(g -> g.contacts().anyMatch(c -> c.equals(contact)));
         }
     }
 
-    public void closed(boolean closed) {
-        this.closed = closed;
+    public void closed(boolean close) {
+        this.closed = close;
     }
 
-    protected abstract ContactGroup createContact(String id);
+    protected abstract ContactGroup createContact(String id0);
     protected abstract void populate();
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -57,8 +50,8 @@ public abstract class SwitchContact extends Component {
             super(id, parent);
         }
         @Override
-        protected ContactGroup createContact(String id) {
-            return new ContactGroup.Vertical(id, parent);
+        protected ContactGroup createContact(String id0) {
+            return new ContactGroup.Vertical(id0, parent);
         }
         @Override
         protected void populate() {
@@ -76,8 +69,8 @@ public abstract class SwitchContact extends Component {
             super(id, parent);
         }
         @Override
-        protected ContactGroup createContact(String id) {
-            return new ContactGroup.Horizontal(id, parent);
+        protected ContactGroup createContact(String id0) {
+            return new ContactGroup.Horizontal(id0, parent);
         }
         @Override
         protected void populate() {

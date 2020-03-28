@@ -59,7 +59,7 @@ public class LogikusPanel extends JComponent implements Module {
     private final List<ToggleLane> toggles;
     
     private final List<Connection> connections;
-    private final List<Contact> contacts;
+    private final List<ContactGroup> groups;
 
     private final transient Object updateLock = new Object();
     
@@ -80,12 +80,12 @@ public class LogikusPanel extends JComponent implements Module {
             .collect(toList())
             );
         
-        contacts = unmodifiableList(
+        groups = unmodifiableList(
             Stream.of(
-                source.contacts(),
-                outputs.stream().flatMap(Output::contacts),
-                push.contacts(),
-                toggles.stream().flatMap(ToggleLane::contacts)
+                source.groups(),
+                outputs.stream().flatMap(Output::groups),
+                push.groups(),
+                toggles.stream().flatMap(ToggleLane::groups)
                 )
             .flatMap(Function.identity())
             .collect(toList()));
@@ -222,8 +222,11 @@ public class LogikusPanel extends JComponent implements Module {
                 endTrack = null;
             }
         };
-        contacts.forEach(c -> c.addMouseListener(adapter));
-        contacts.forEach(c -> c.addMouseMotionListener(adapter));
+        groups
+        .stream()
+        .flatMap(ContactGroup::contacts)
+        .peek(c -> c.addMouseListener(adapter))
+        .forEach(c -> c.addMouseMotionListener(adapter));
         
         addMouseMotionListener(new MouseAdapter() {
             @Override
@@ -384,8 +387,9 @@ public class LogikusPanel extends JComponent implements Module {
     }
 
     private Contact contactForId(String id, int lineNumber) throws NoSuchElementException {
-        return contacts
+        return groups
             .stream()
+            .flatMap(ContactGroup::contacts)
             .filter(c -> c.id().equals(id))
             .findAny()
             .orElseThrow(() -> new NoSuchElementException(lineNumber + ": unknown contact \"" + id + "\""));
@@ -393,26 +397,32 @@ public class LogikusPanel extends JComponent implements Module {
     
     private void update() {
         synchronized (updateLock) {
-            contacts.forEach(Contact::deactive);
+            groups.forEach(ContactGroup::deactive);
             connections.forEach(Connection::deactive);
-            var networks = new HashMap<Contact, Set<Contact>>();
+            var networks = new HashMap<ContactGroup, Set<ContactGroup>>();
             for (var connection : connections) {
-                var set = new HashSet<Contact>();
-                connection.connected().forEach(contact -> {
-                    set.addAll(networks.getOrDefault(contact, Set.of(contact)));
+                var set = new HashSet<ContactGroup>();
+                connection.connected().forEach(g -> {
+                    set.addAll(networks.getOrDefault(g, Set.of(g)));
                 });
-                set.forEach(contact -> networks.put(contact, set));
+                set.forEach(group -> networks.put(group, set));
             }
-            var active = source.contacts().map(networks::get).filter(Objects::nonNull).findAny().orElse(Set.of());
-            active.forEach(Contact::active);
-            connections.stream().filter(connection -> active.contains(connection.start())).forEach(Connection::active);
+            var active = networks.get(source.group());
+            if (active != null) {
+                active.forEach(ContactGroup::active);
+                active.stream()
+                .flatMap(ContactGroup::contacts)
+                .map(Contact::connection)
+                .filter(Objects::nonNull)
+                .forEach(Connection::active);
+            }
         }
         repaint();
     }
     
     private void clear() {
         connections.clear();
-        contacts().forEach(Contact::clear);
+        groups().forEach(ContactGroup::clear);
         update();
     }
     
@@ -446,12 +456,12 @@ public class LogikusPanel extends JComponent implements Module {
     }
 
     @Override
-    public Stream<Contact> contacts() {
-        return contacts.stream();
+    public Stream<ContactGroup> groups() {
+        return groups.stream();
     }
     
     @Override
-    public Stream<Contact> connected(Contact contact) {
+    public Stream<ContactGroup> connected(Contact contact) {
         return null;
     }
     

@@ -32,12 +32,12 @@ public class PushLane extends ModuleImpl {
     }
     
     @Override
-    public Stream<Contact> contacts() {
-        return group.contacts();
+    public Stream<ContactGroup> groups() {
+        return group.groups();
     }
     
     @Override
-    public Stream<Contact> connected(Contact contact) {
+    public Stream<ContactGroup> connected(Contact contact) {
         return group.connected(contact);
     }
     

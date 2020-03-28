@@ -21,12 +21,12 @@ public abstract class Button extends Component {
     }
     
     @Override
-    public Stream<Contact> contacts() {
+    public Stream<ContactGroup> groups() {
         return Stream.empty();
     }
     
     @Override
-    public Stream<Contact> connected(Contact contact) {
+    public Stream<ContactGroup> connected(Contact contact) {
         return Stream.empty();
     }
 

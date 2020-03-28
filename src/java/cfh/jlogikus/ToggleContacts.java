@@ -39,25 +39,25 @@ public class ToggleContacts extends ModuleImpl {
         return panel;
     }
     
-    public void toggle(boolean toggled) {
-        this.toggled = toggled;
+    public void toggle(boolean toggle) {
+        this.toggled = toggle;
         open.closed(toggled);
         closed.closed(!toggled);
     }
     
     @Override
-    public Stream<Contact> contacts() {
+    public Stream<ContactGroup> groups() {
         return Stream.concat(
-            open.contacts(),
-            closed.contacts()
+            open.groups(),
+            closed.groups()
             );
     }
     
     @Override
-    public Stream<Contact> connected(Contact contact) {
+    public Stream<ContactGroup> connected(Contact contact) {
         return Stream
             .of(open, closed)
-            .filter(g -> g.contacts().anyMatch(c -> c.equals(contact)))
+            .filter(g -> g.groups().flatMap(ContactGroup::contacts).anyMatch(c -> c.equals(contact)))
             .findAny()
             .map(s -> s.connected(contact))
             .orElse(Stream.empty());

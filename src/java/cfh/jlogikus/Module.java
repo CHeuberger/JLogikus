@@ -8,10 +8,10 @@ public interface Module {
     public String id();
     
     /** Return all contacts of this module, including submodules. */
-    public Stream<Contact> contacts();
+    public Stream<ContactGroup> groups();
     
     /** Return all contacts connected to the given contact. */
-    public Stream<Contact> connected(Contact contact);
+    public Stream<ContactGroup> connected(Contact contact);
     
     /** Indicates that a submodule was changed regarding its connections. */
     public void changed(Module module);

@@ -54,15 +54,15 @@ public class ToggleLane extends ModuleImpl {
     }
     
     @Override
-    public Stream<Contact> contacts() {
-        return contacts.stream().flatMap(ToggleContacts::contacts);
+    public Stream<ContactGroup> groups() {
+        return contacts.stream().flatMap(ToggleContacts::groups);
     }
     
     @Override
-    public Stream<Contact> connected(Contact contact) {
+    public Stream<ContactGroup> connected(Contact contact) {
         return contacts
             .stream()
-            .filter(t -> t.contacts().anyMatch(c -> c.equals(contact)))
+            .filter(t -> t.groups().flatMap(ContactGroup::contacts).anyMatch(c -> c.equals(contact)))
             .findAny()
             .map(s -> s.connected(contact))
             .orElse(Stream.empty());

@@ -15,19 +15,19 @@ public class LampFrame extends Component {
     protected void paintComponent(Graphics g) {
         g.setColor(settings.displayFrame());
         g.fillRect(0, 0, getWidth(), getHeight());
-        if (parent.contacts().anyMatch(Contact::isActive)) {
+        if (parent.groups().anyMatch(ContactGroup::isActive)) {
             g.setColor(settings.lampLight());
-            g.fillRect(10, 10, getWidth()-21, getHeight()-21);
+            g.fillRect(10, 20, getWidth()-21, getHeight()-41);
         }
     }
 
     @Override
-    public Stream<Contact> contacts() {
+    public Stream<ContactGroup> groups() {
         return Stream.empty();
     }
     
     @Override
-    public Stream<Contact> connected(Contact contact) {
+    public Stream<ContactGroup> connected(Contact contact) {
         return Stream.empty();
     }
 }

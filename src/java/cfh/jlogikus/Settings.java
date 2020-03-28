@@ -22,7 +22,7 @@ public enum Settings {
         @Override public Dimension buttonSize() { return shrink(super.buttonSize(), 0.8F); }
         @Override public int buttonSlide() { return shrink(super.buttonSlide(), 0.8F); }
 
-        @Override public BasicStroke connectionStroke() { return new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND); }
+        @Override public BasicStroke connectionStroke() { return new BasicStroke(2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND); }
         @Override public BasicStroke connectionStrokeBorder() { return new BasicStroke(6, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND); }
     };
     
@@ -55,9 +55,9 @@ public enum Settings {
     public Color connectionColorDeact() { return new Color(0x40, 0x40, 0xFF, 0xC0); }
     public Color connectionColorAct() { return new Color(0x20, 0x20, 0xFF, 0xC0); }
     public Color connectionBorderDeact() { return connectionColorDeact().darker().darker(); }
-    public Color connectionBorderAct() { return new Color(0xF0, 0x60, 0xA0, 0xC0); }
+    public Color connectionBorderAct() { return new Color(0xA0, 0xA0, 0xFF, 0xE0); }
     public BasicStroke connectionStroke() { return new BasicStroke(4, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND); }
-    public BasicStroke connectionStrokeBorder() { return new BasicStroke(7, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND); }
+    public BasicStroke connectionStrokeBorder() { return new BasicStroke(8, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND); }
     
     public int pushContactGap() { return 40; }
     
