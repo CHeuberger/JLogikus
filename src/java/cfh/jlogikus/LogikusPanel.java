@@ -27,12 +27,14 @@ import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -308,45 +310,19 @@ public class LogikusPanel extends JComponent implements Module {
             
             line = input.readLine();  // date time
 
-            if (version > 100) {
-                var count = loadCount(input, "outputs:");
-                if (count != outputs.size())
-                    throw new IOException(input.getLineNumber() + ": invalid output count " + count + " in \"" + line + "\"");
-                for (var output : outputs) {
-                    output.label().setText(input.readLine());
-                }
+            if (version >= 101) {
+                loadList(input, "outputs:", outputs, (o, s) -> o.label().setText(s));
+                loadList(input, "toggles:", toggles, (t, s) -> t.label().setText(s));
             }
             
-            if (version > 100) {
-                var count = loadCount(input, "toggles:");
-                if (count != toggles.size())
-                    throw new IOException(input.getLineNumber() + ": invalid toggle count " + count + " in \"" + line + "\"");
-                for (var toggle : toggles) {
-                    toggle.label().setText(input.readLine());
+            if (version >= 100) {
+                var list = loadConnections(input);
+                clear();
+                for (Connection connection : list) {
+                    connections.add(connection);
+                    connection.start().connected(connection);
+                    connection.end().connected(connection);
                 }
-            }
-            
-            var count = loadCount(input, "connections:");
-            if (count < 0)
-                throw new IOException(input.getLineNumber() + ": invalid number of connections \"" + line + "\"");
-            var list = new ArrayList<Connection>();
-            for (var i = 0; i < count; i++) {
-                line = input.readLine();
-                var tokens = line.split(" *~ *", 2);
-                if (tokens.length < 2)
-                    throw new IOException(input.getLineNumber() + ": connection unparseable \"" + line + "\"");
-                var start = contactForId(tokens[0], input.getLineNumber());
-                var end = contactForId(tokens[1], input.getLineNumber());
-                if (start == end) {
-                    throw new IOException(input.getLineNumber() + ": connection to same contact not allowed \"" + line + "\"");
-                }
-                list.add(new Connection(start, end));
-            }
-            clear();
-            for (Connection connection : list) {
-                connections.add(connection);
-                connection.start().connected(connection);
-                connection.end().connected(connection);
             }
             
             update();
@@ -361,6 +337,34 @@ public class LogikusPanel extends JComponent implements Module {
         }
     }
     
+    private <T> void loadList(LineNumberReader input, String key, Collection<T> elements, BiConsumer<T, String> reader) throws IOException {
+        var count = loadCount(input, key);
+        if (count != elements.size())
+            throw new IOException(String.format("%d: invalid count for %s: %d, expected %s", input.getLineNumber(), key, count, elements.size()));
+        for (var element : elements) {
+            reader.accept(element, input.readLine());
+        }
+    }
+    
+    private List<Connection> loadConnections(LineNumberReader input) throws IOException {
+        var count = loadCount(input, "connections:");
+        if (count < 0)
+            throw new IOException(input.getLineNumber() + ": invalid number of connections");
+        var list = new ArrayList<Connection>();
+        for (var i = 0; i < count; i++) {
+            var line = input.readLine();
+            var tokens = line.split(" *~ *", 2);
+            if (tokens.length < 2)
+                throw new IOException(input.getLineNumber() + ": connection unparseable \"" + line + "\"");
+            var start = contactForId(tokens[0], input.getLineNumber());
+            var end = contactForId(tokens[1], input.getLineNumber());
+            if (start == end) {
+                throw new IOException(input.getLineNumber() + ": connection to same contact not allowed \"" + line + "\"");
+            }
+            list.add(new Connection(start, end));
+        }
+        return list;
+    }
     private int loadCount(LineNumberReader input, String key) throws IOException {
         var line = input.readLine();
         if (!line.startsWith(key))
@@ -448,7 +452,6 @@ public class LogikusPanel extends JComponent implements Module {
     
     @Override
     public Stream<Contact> connected(Contact contact) {
-        // TODO Auto-generated method stub
         return null;
     }
     
