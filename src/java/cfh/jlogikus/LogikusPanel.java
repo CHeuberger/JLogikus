@@ -21,6 +21,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -29,10 +31,10 @@ import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Set;
@@ -64,6 +66,8 @@ public class LogikusPanel extends JComponent implements Module {
     
     private final List<Connection> connections;
     private final List<ContactGroup> groups;
+    
+    private BufferedImage image = null;
     
     private transient volatile Point startTrack = null;
     private transient volatile Point endTrack = null;
@@ -263,7 +267,7 @@ public class LogikusPanel extends JComponent implements Module {
         try (var out = new PrintWriter(file)) {
             out
             .printf("JLogikus\n")
-            .printf("101\n")
+            .printf("102\n")
             .printf("%s\n", LocalDateTime.now(ZoneOffset.UTC));
 
             // 101
@@ -273,11 +277,24 @@ public class LogikusPanel extends JComponent implements Module {
             // 101
             out.printf("toggles:%d\n", toggles.size());
             toggles.stream().map(ToggleLane::label).map(EditableLabel::getText).forEach(s -> out.printf("%s\n", s));
-            
+
             // 101,100
             out.printf("connections:%d\n", connections.size());
             for (var connection : connections) {
                 out.printf("%s ~ %s\n", connection.start().id(), connection.end().id());
+            }
+            
+            // 102
+            if (image == null) {
+                out.printf("image:0\n");
+            } else {
+                var data = new ByteArrayOutputStream(1024);
+                ImageIO.write(image, "png", data);
+                var encoded = Base64.getEncoder().encodeToString(data.toByteArray());
+                out.printf("image:%d\n", (encoded.length()+99)/100);
+                for (var i = 0; i < encoded.length(); i+=100) {
+                    out.printf("%s\n", encoded.substring(i, Math.min(i+100, encoded.length())));
+                }
             }
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -324,23 +341,50 @@ public class LogikusPanel extends JComponent implements Module {
 
                 line = input.readLine();  // date time
 
+                List<String> outputLabels = null;
+                List<String> toggleLabels = null;
                 if (version >= 101) {
-                    ListIterator<String> outputLabels = loadList(input, "outputs:", outputs.size());
-                    outputs.forEach(o -> o.label().setText(outputLabels.next()));
-                    ListIterator<String> toggleLabels = loadList(input, "toggles:", toggles.size());
-                    toggles.forEach(t -> t.label().setText(toggleLabels.next()));
+                    outputLabels = loadList(input, "outputs:", outputs.size());
+                    toggleLabels = loadList(input, "toggles:", toggles.size());
                 }
 
+                List<Connection> connectList = null;
                 if (version >= 100) {
-                    var list = loadConnections(input);
+                    connectList = loadConnections(input);
+                }
+                
+                BufferedImage img = null;
+                if (version >= 102) {
+                    var count = loadCount(input, "image:");
+                    if (count > 0) {
+                        var builder = new StringBuilder();
+                        for (var i = 0; i < count; i++) {
+                            builder.append(input.readLine());
+                        }
+                        var data = Base64.getDecoder().decode(builder.toString());
+                        img = ImageIO.read(new ByteArrayInputStream(data));
+                    }
+                }
+                
+                if (outputLabels != null) {
+                    var iter = outputLabels.listIterator();
+                    outputs.forEach(o -> o.label().setText(iter.next()));
+                }
+                if (toggleLabels != null) {
+                    var iter = toggleLabels.listIterator();
+                    toggles.forEach(t -> t.label().setText(iter.next()));
+                }
+                if (connectList != null) {
                     clearConnections();
-                    for (Connection connection : list) {
+                    for (Connection connection : connectList) {
                         connections.add(connection);
                         connection.start().connected(connection);
                         connection.end().connected(connection);
                     }
                 }
-
+                if (img != null) {
+                    setImage(img);
+                }
                 update();
             } catch (IOException | NumberFormatException | NoSuchElementException ex) {
                 ex.printStackTrace();
@@ -360,10 +404,10 @@ public class LogikusPanel extends JComponent implements Module {
             if (file == null) {
                 return;
             }
-            BufferedImage image;
+            BufferedImage img;
             try {
-                image = ImageIO.read(file);
-                if (image == null) {
+                img = ImageIO.read(file);
+                if (img == null) {
                     showMessageDialog(this, "Unable to read image", "Unknown Error", ERROR_MESSAGE);
                     return;
                 }
@@ -376,12 +420,21 @@ public class LogikusPanel extends JComponent implements Module {
                 showMessageDialog(this, message, ex.getClass().getSimpleName(), ERROR_MESSAGE);
                 return;
             }
+            setImage(img);
+        } else {
+            setImage(null);
+        }
+        repaint();
+    }
+
+    private void setImage(BufferedImage img) {
+        if (img != null) {
             int rest = outputs.size();
             int x = 0;
-            int width = image.getWidth();
+            int width = img.getWidth();
             for (var output : outputs) {
                 var w = width / rest;
-                output.lamp().image(image, new Rectangle(x, 0, w, image.getHeight()));
+                output.lamp().image(img, new Rectangle(x, 0, w, img.getHeight()));
                 x += w;
                 width -= w;
                 rest -= 1;
@@ -389,10 +442,10 @@ public class LogikusPanel extends JComponent implements Module {
         } else {
             outputs.stream().map(Output::lamp).forEach(LampFrame::clear);
         }
-        repaint();
+        image = img;
     }
     
-    private ListIterator<String> loadList(LineNumberReader input, String key, int expected) throws IOException {
+    private List<String> loadList(LineNumberReader input, String key, int expected) throws IOException {
         var count = loadCount(input, key);
         if (count != expected)
             throw new IOException(String.format("%d: invalid count for %s: %d, expected %s", input.getLineNumber(), key, count, expected));
@@ -400,7 +453,7 @@ public class LogikusPanel extends JComponent implements Module {
         for (int i = 0; i < count; i++) {
             list.add(input.readLine());
         }
-        return list.listIterator();
+        return list;
     }
     
     private List<Connection> loadConnections(LineNumberReader input) throws IOException {
@@ -426,7 +479,7 @@ public class LogikusPanel extends JComponent implements Module {
         var line = input.readLine();
         if (!line.startsWith(key))
             throw new IOException(String.format("%d: expected \"%s\" but got \"%s\"", input.getLineNumber(), key, line));
-        var count = Integer.parseInt(line.substring(key.length()));
+        var count = Integer.parseInt(line.substring(key.length()).trim());
         return count;
     }
     
