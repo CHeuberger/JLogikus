@@ -20,6 +20,10 @@ public abstract class Button extends Component {
         return pressed;
     }
     
+    public void reset() {
+        pressed = false;
+    }
+    
     @Override
     public Stream<ContactGroup> groups() {
         return Stream.empty();

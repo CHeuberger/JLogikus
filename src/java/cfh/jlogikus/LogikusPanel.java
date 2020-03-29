@@ -251,7 +251,7 @@ public class LogikusPanel extends JComponent implements Module {
         popup.add(createMenu("image", this::doImage, "Read image from file; CTRL remove image"));
         popup.addSeparator();
         popup.add(createMenu("clear label", this::doClearLabel, "Remove labels"));
-        popup.add(createMenu("RESET", this::doClear, "Remove image, ALL labels and ALL connections"));
+        popup.add(createMenu("RESET", this::doReset, "Remove image, ALL labels and ALL connections"));
         popup.addSeparator();
         popup.add(createMenu("update", this::doUpdate, "Update status for debugging"));
         
@@ -504,11 +504,13 @@ public class LogikusPanel extends JComponent implements Module {
         }
     }
     
-    private void doClear(ActionEvent ev) {
+    private void doReset(ActionEvent ev) {
         if (showConfirmDialog(this, "Remove image, ALL labels and ALL connections?", "Confirm", OK_CANCEL_OPTION) == OK_OPTION) {
             clearImage();
             clearConnections();
             clearLabels();
+            push.button().reset();
+            toggles.stream().map(ToggleLane::button).forEach(Button::reset);
         }
     }
     
