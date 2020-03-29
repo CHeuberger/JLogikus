@@ -267,31 +267,35 @@ public class LogikusPanel extends JComponent implements Module {
         try (var out = new PrintWriter(file)) {
             out
             .printf("JLogikus\n")
-            .printf("102\n")
+            .printf("103\n")
             .printf("%s\n", LocalDateTime.now(ZoneOffset.UTC));
 
             // 101
-            out.printf("outputs:%d\n", outputs.size());
+            out.printf("outputs: %d\n", outputs.size());
             outputs.stream().map(Output::label).map(EditableLabel::getText).forEach(s -> out.printf("%s\n", s));
             
+            // 103
+            out.printf("push: %d\n", 1);
+            out.printf("%s\n", push.label().getText());
+            
             // 101
-            out.printf("toggles:%d\n", toggles.size());
+            out.printf("toggles: %d\n", toggles.size());
             toggles.stream().map(ToggleLane::label).map(EditableLabel::getText).forEach(s -> out.printf("%s\n", s));
 
             // 101,100
-            out.printf("connections:%d\n", connections.size());
+            out.printf("connections: %d\n", connections.size());
             for (var connection : connections) {
                 out.printf("%s ~ %s\n", connection.start().id(), connection.end().id());
             }
             
             // 102
             if (image == null) {
-                out.printf("image:0\n");
+                out.printf("image: 0\n");
             } else {
                 var data = new ByteArrayOutputStream(1024);
                 ImageIO.write(image, "png", data);
                 var encoded = Base64.getEncoder().encodeToString(data.toByteArray());
-                out.printf("image:%d\n", (encoded.length()+99)/100);
+                out.printf("image: %d\n", (encoded.length()+99)/100);
                 for (var i = 0; i < encoded.length(); i+=100) {
                     out.printf("%s\n", encoded.substring(i, Math.min(i+100, encoded.length())));
                 }
@@ -335,16 +339,24 @@ public class LogikusPanel extends JComponent implements Module {
                 if (!line.equals("JLogikus"))
                     throw new IOException(input.getLineNumber() + ": unrecognized file header");
                 line = input.readLine();
-                if (!List.of("102", "101", "100").contains(line))
+                if (!List.of("103", "102", "101", "100").contains(line))
                     throw new IOException(input.getLineNumber() + ": unrecognized version \"" + line + "\"");
                 var version = Integer.parseInt(line);
 
                 line = input.readLine();  // date time
 
                 List<String> outputLabels = null;
-                List<String> toggleLabels = null;
                 if (version >= 101) {
                     outputLabels = loadList(input, "outputs:", outputs.size());
+                }
+
+                String pushLabel = null;
+                if (version >= 103) {
+                    pushLabel = loadList(input, "push:", 1).get(0);
+                }
+                
+                List<String> toggleLabels = null;
+                if (version >= 101) {
                     toggleLabels = loadList(input, "toggles:", toggles.size());
                 }
 
@@ -369,6 +381,9 @@ public class LogikusPanel extends JComponent implements Module {
                 if (outputLabels != null) {
                     var iter = outputLabels.listIterator();
                     outputs.forEach(o -> o.label().setText(iter.next()));
+                }
+                if (pushLabel != null) {
+                    push.label().setText(pushLabel);
                 }
                 if (toggleLabels != null) {
                     var iter = toggleLabels.listIterator();
@@ -548,6 +563,7 @@ public class LogikusPanel extends JComponent implements Module {
     
     private void clearLabels() {
         outputs.forEach(o -> o.label().setText(o.id()));
+        push.label().setText(push.id());
         toggles.forEach(t -> t.label().setText(t.id()));
     }
     

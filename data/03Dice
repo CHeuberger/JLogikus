@@ -1,7 +1,7 @@
 JLogikus
-102
-2020-03-29T15:39:42.800307
-outputs:10
+103
+2020-03-29T16:20:43.765115100
+outputs: 10
 skip
 
 1
@@ -12,7 +12,9 @@ skip
 6
 
 again
-toggles:10
+push: 1
+
+toggles: 10
 
 
 1
@@ -23,7 +25,7 @@ toggles:10
 6
 
 
-connections:12
+connections: 12
 Q₂ ~ S2Ea₁
 S2Eb₁ ~ L2₂
 S2Ea₃ ~ S3Ea₂
@@ -36,7 +38,7 @@ S4Eb₁ ~ L4₂
 S5Eb₁ ~ L5₂
 S6Eb₁ ~ L6₂
 S7Eb₁ ~ L7₂
-image:76
+image: 76
 iVBORw0KGgoAAAANSUhEUgAAA4QAAACCCAYAAAAe/wa7AAAV2UlEQVR4Xu3d/698RX3H8fM3FhAJSCjBtmBp/IaUovULhP5gQ8uF
 KopoCDUoEYq2kGAlH0hrG20MCFqNFIIYCkUpIoiAQDvvnHOy83nNnHPnfe/Ontk9zx8e+bDvmXnP+8ye5e7knN3tuq77AwAAAADA
 KiUBAAAAAMA6JAEAAAAAwDokAQAAAADAOiQBAAAAAMA6JAEAAAAAwDokAQAAAADAOiQBAAAAAMA6JAEAAAAAwDokAQAAAADAOiQB
