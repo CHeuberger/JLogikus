@@ -13,7 +13,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -30,14 +29,13 @@ import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -46,7 +44,6 @@ import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
@@ -55,6 +52,8 @@ import cfh.FileChooser;
 public class LogikusPanel extends JComponent implements Module {
     
     private static final int META_KEYS = CTRL_DOWN_MASK + SHIFT_DOWN_MASK + ALT_DOWN_MASK;
+    
+    private final transient Object updateLock = new Object();
     
     private final Settings settings = Settings.get();
     
@@ -65,8 +64,6 @@ public class LogikusPanel extends JComponent implements Module {
     
     private final List<Connection> connections;
     private final List<ContactGroup> groups;
-
-    private final transient Object updateLock = new Object();
     
     private transient volatile Point startTrack = null;
     private transient volatile Point endTrack = null;
@@ -244,12 +241,14 @@ public class LogikusPanel extends JComponent implements Module {
         });
         
         var popup = new JPopupMenu();
-        popup.add(createMenu("load", this::doLoad, "Load *program* from file"));
+        popup.add(createMenu("load", this::doLoad, "Load *program* from file; CTRL remove connections"));
         popup.add(createMenu("save", this::doSave, "Save current *program* to file"));
         popup.addSeparator();
         popup.add(createMenu("image", this::doImage, "Read image from file; CTRL remove image"));
         popup.addSeparator();
-        popup.add(createMenu("clear", this::doClear, "Remove all connections; CTRL remove image and connections"));
+        popup.add(createMenu("clear label", this::doClearLabel, "Remove labels"));
+        popup.add(createMenu("RESET", this::doClear, "Remove image, ALL labels and ALL connections"));
+        popup.addSeparator();
         popup.add(createMenu("update", this::doUpdate, "Update status for debugging"));
         
         setComponentPopupMenu(popup);
@@ -279,7 +278,7 @@ public class LogikusPanel extends JComponent implements Module {
             out.printf("connections:%d\n", connections.size());
             for (var connection : connections) {
                 out.printf("%s ~ %s\n", connection.start().id(), connection.end().id());
-            }            
+            }
         } catch (IOException ex) {
             ex.printStackTrace();
             Object[] message = {
@@ -291,59 +290,67 @@ public class LogikusPanel extends JComponent implements Module {
     }
 
     private void doLoad(ActionEvent ev) {
-        var file = new FileChooser("file").getFileToLoad(this);
-        if (file == null) {
-            return;
-        }
-        
-        LineNumberReader input;
-        try {
-            input = new LineNumberReader(new FileReader(file));
-        } catch (FileNotFoundException ex) {
-            ex.printStackTrace();
-            Object[] message = {
-                    ex.getClass().getSimpleName(),
-                    ex.getMessage(),
-            };
-            showMessageDialog(this, message, ex.getClass().getSimpleName(), ERROR_MESSAGE);
-            return;
-        }
-        String line = "";
-        try (input) {
-            line = input.readLine();
-            if (!line.equals("JLogikus"))
-                throw new IOException(input.getLineNumber() + ": unrecognized file header");
-            line = input.readLine();
-            if (!List.of("101", "100").contains(line))
-                throw new IOException(input.getLineNumber() + ": unrecognized version \"" + line + "\"");
-            var version = Integer.parseInt(line);
-            
-            line = input.readLine();  // date time
-
-            if (version >= 101) {
-                loadList(input, "outputs:", outputs, (o, s) -> o.label().setText(s));
-                loadList(input, "toggles:", toggles, (t, s) -> t.label().setText(s));
-            }
-            
-            if (version >= 100) {
-                var list = loadConnections(input);
+        if ((ev.getModifiers() & ev.CTRL_MASK) != 0) {
+            if (showConfirmDialog(this, "Remove ALL connections?", "Confirm", OK_CANCEL_OPTION) == OK_OPTION) {
                 clearConnections();
-                for (Connection connection : list) {
-                    connections.add(connection);
-                    connection.start().connected(connection);
-                    connection.end().connected(connection);
-                }
             }
-            
-            update();
-        } catch (IOException | NumberFormatException | NoSuchElementException ex) {
-            ex.printStackTrace();
-            Object[] message = {
-                    ex.getClass().getSimpleName(),
-                    ex.getMessage(),
-                    input.getLineNumber() + ": " + line
-            };
-            showMessageDialog(this, message, ex.getClass().getSimpleName(), ERROR_MESSAGE);
+        } else {
+            var file = new FileChooser("file").getFileToLoad(this);
+            if (file == null) {
+                return;
+            }
+
+            LineNumberReader input;
+            try {
+                input = new LineNumberReader(new FileReader(file));
+            } catch (FileNotFoundException ex) {
+                ex.printStackTrace();
+                Object[] message = {
+                        ex.getClass().getSimpleName(),
+                        ex.getMessage(),
+                };
+                showMessageDialog(this, message, ex.getClass().getSimpleName(), ERROR_MESSAGE);
+                return;
+            }
+            String line = "";
+            try (input) {
+                line = input.readLine();
+                if (!line.equals("JLogikus"))
+                    throw new IOException(input.getLineNumber() + ": unrecognized file header");
+                line = input.readLine();
+                if (!List.of("102", "101", "100").contains(line))
+                    throw new IOException(input.getLineNumber() + ": unrecognized version \"" + line + "\"");
+                var version = Integer.parseInt(line);
+
+                line = input.readLine();  // date time
+
+                if (version >= 101) {
+                    ListIterator<String> outputLabels = loadList(input, "outputs:", outputs.size());
+                    outputs.forEach(o -> o.label().setText(outputLabels.next()));
+                    ListIterator<String> toggleLabels = loadList(input, "toggles:", toggles.size());
+                    toggles.forEach(t -> t.label().setText(toggleLabels.next()));
+                }
+
+                if (version >= 100) {
+                    var list = loadConnections(input);
+                    clearConnections();
+                    for (Connection connection : list) {
+                        connections.add(connection);
+                        connection.start().connected(connection);
+                        connection.end().connected(connection);
+                    }
+                }
+
+                update();
+            } catch (IOException | NumberFormatException | NoSuchElementException ex) {
+                ex.printStackTrace();
+                Object[] message = {
+                        ex.getClass().getSimpleName(),
+                        ex.getMessage(),
+                        input.getLineNumber() + ": " + line
+                };
+                showMessageDialog(this, message, ex.getClass().getSimpleName(), ERROR_MESSAGE);
+            }
         }
     }
     
@@ -356,19 +363,22 @@ public class LogikusPanel extends JComponent implements Module {
             BufferedImage image;
             try {
                 image = ImageIO.read(file);
+                if (image == null) {
+                    showMessageDialog(this, "Unable to read image", "Unknown Error", ERROR_MESSAGE);
+                    return;
+                }
             } catch (IOException ex) {
                 ex.printStackTrace();
                 Object[] message = {
                         ex.getClass().getSimpleName(),
                         ex.getMessage(),
                 };
-                JOptionPane.showMessageDialog(this, message, ex.getClass().getSimpleName(), ERROR_MESSAGE);
+                showMessageDialog(this, message, ex.getClass().getSimpleName(), ERROR_MESSAGE);
                 return;
             }
             int rest = outputs.size();
             int x = 0;
             int width = image.getWidth();
-            int h = image.getHeight();
             for (var output : outputs) {
                 var w = width / rest;
                 output.lamp().image(image, new Rectangle(x, 0, w, image.getHeight()));
@@ -382,13 +392,15 @@ public class LogikusPanel extends JComponent implements Module {
         repaint();
     }
     
-    private <T> void loadList(LineNumberReader input, String key, Collection<T> elements, BiConsumer<T, String> reader) throws IOException {
+    private ListIterator<String> loadList(LineNumberReader input, String key, int expected) throws IOException {
         var count = loadCount(input, key);
-        if (count != elements.size())
-            throw new IOException(String.format("%d: invalid count for %s: %d, expected %s", input.getLineNumber(), key, count, elements.size()));
-        for (var element : elements) {
-            reader.accept(element, input.readLine());
+        if (count != expected)
+            throw new IOException(String.format("%d: invalid count for %s: %d, expected %s", input.getLineNumber(), key, count, expected));
+        var list = new ArrayList<String>();
+        for (int i = 0; i < count; i++) {
+            list.add(input.readLine());
         }
+        return list.listIterator();
     }
     
     private List<Connection> loadConnections(LineNumberReader input) throws IOException {
@@ -418,16 +430,17 @@ public class LogikusPanel extends JComponent implements Module {
         return count;
     }
     
+    private void doClearLabel(ActionEvent ev) {
+        if (showConfirmDialog(this, "Remove ALL labels?", "Confirm", OK_CANCEL_OPTION) == OK_OPTION) {
+            clearLabels();
+        }
+    }
+    
     private void doClear(ActionEvent ev) {
-        if ((ev.getModifiers() & ev.CTRL_MASK) == 0) {
-            if (showConfirmDialog(this, "Remove ALL connections?", "Confirm", OK_CANCEL_OPTION) == OK_OPTION) {
-                clearConnections();
-            }
-        } else {
-            if (showConfirmDialog(this, "Remove image and ALL connections?", "Confirm", OK_CANCEL_OPTION) == OK_OPTION) {
-                clearConnections();
-                clearImage();
-            }
+        if (showConfirmDialog(this, "Remove image, ALL labels and ALL connections?", "Confirm", OK_CANCEL_OPTION) == OK_OPTION) {
+            clearImage();
+            clearConnections();
+            clearLabels();
         }
     }
     
@@ -469,15 +482,20 @@ public class LogikusPanel extends JComponent implements Module {
         repaint();
     }
     
+    private void clearImage() {
+        outputs.stream().map(Output::lamp).forEach(LampFrame::clear);
+        repaint();
+    }
+    
     private void clearConnections() {
         connections.clear();
         groups().forEach(ContactGroup::clear);
         update();
     }
     
-    private void clearImage() {
-        outputs.stream().map(Output::lamp).forEach(LampFrame::clear);
-        repaint();
+    private void clearLabels() {
+        outputs.forEach(o -> o.label().setText(o.id()));
+        toggles.forEach(t -> t.label().setText(t.id()));
     }
     
     private JMenuItem createMenu(String text, ActionListener listener, String tooltip) {
