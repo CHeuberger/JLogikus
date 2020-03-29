@@ -16,8 +16,8 @@ public class RightFrame extends JComponent {
     protected void paintComponent(Graphics g) {
         g.setColor(settings.displayFrame());
         g.fillPolygon(
-            new int[] { 0, getWidth(),  0 },
-            new int[] { 0, getHeight(), getHeight() },
-            3);
+            new int[] { 0, getWidth()/10, getWidth(),  0 },
+            new int[] { 0, 0,             getHeight(), getHeight() },
+            4);
     }
 }

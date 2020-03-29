@@ -13,12 +13,14 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -39,9 +41,11 @@ import java.util.function.Function;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
@@ -198,7 +202,7 @@ public class LogikusPanel extends JComponent implements Module {
                                             }
                                         }
                                     }
-                                    setStart(contact, ev.getPoint());
+                                    setStart(null, ev.getPoint());
                                 }
                             }
                         }
@@ -242,6 +246,8 @@ public class LogikusPanel extends JComponent implements Module {
         popup.add(createMenu("load", this::doLoad, "Load *program* from file"));
         popup.add(createMenu("save", this::doSave, "Save current *program* to file"));
         popup.addSeparator();
+        popup.add(createMenu("image", this::doImage, "Read image from file; CTRL: remove image"));
+        popup.addSeparator();
         popup.add(createMenu("clear", this::doClear, "Remove all connections"));
         popup.add(createMenu("update", this::doUpdate, "Update status for debugging"));
         
@@ -249,7 +255,7 @@ public class LogikusPanel extends JComponent implements Module {
     }
 
     private void doSave(ActionEvent ev) {
-        var file = new FileChooser().getFileToSave(this);
+        var file = new FileChooser("file").getFileToSave(this);
         if (file == null) {
             return;
         }
@@ -284,7 +290,7 @@ public class LogikusPanel extends JComponent implements Module {
     }
 
     private void doLoad(ActionEvent ev) {
-        var file = new FileChooser().getFileToLoad(this);
+        var file = new FileChooser("file").getFileToLoad(this);
         if (file == null) {
             return;
         }
@@ -338,6 +344,42 @@ public class LogikusPanel extends JComponent implements Module {
             };
             showMessageDialog(this, message, ex.getClass().getSimpleName(), ERROR_MESSAGE);
         }
+    }
+    
+    private void doImage(ActionEvent ev) {
+        if ((ev.getModifiers() & ev.CTRL_MASK) == 0) {
+            var file = new FileChooser("image").getFileToLoad(this);
+            if (file == null) {
+                return;
+            }
+            BufferedImage image;
+            try {
+                image = ImageIO.read(file);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+                Object[] message = {
+                        ex.getClass().getSimpleName(),
+                        ex.getMessage(),
+                };
+                JOptionPane.showMessageDialog(this, message, ex.getClass().getSimpleName(), ERROR_MESSAGE);
+                return;
+            }
+            int rest = outputs.size();
+            int x = 0;
+            int width = image.getWidth();
+            int h = image.getHeight();
+            for (var output : outputs) {
+                var w = width / rest;
+                Image subimage = image.getSubimage(x, 0, w, h);
+                output.lamp().image(subimage);
+                x += w;
+                width -= w;
+                rest -= 1;
+            }
+        } else {
+            outputs.stream().map(Output::lamp).forEach(LampFrame::clear);
+        }
+        repaint();
     }
     
     private <T> void loadList(LineNumberReader input, String key, Collection<T> elements, BiConsumer<T, String> reader) throws IOException {
@@ -423,6 +465,7 @@ public class LogikusPanel extends JComponent implements Module {
     private void clear() {
         connections.clear();
         groups().forEach(ContactGroup::clear);
+        outputs.stream().map(Output::lamp).forEach(LampFrame::clear);
         update();
     }
     

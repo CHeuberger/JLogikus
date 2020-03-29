@@ -26,9 +26,9 @@ public enum Settings {
         @Override public BasicStroke connectionStrokeBorder() { return new BasicStroke(6, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND); }
     };
     
-    public static Settings get() { return SMALL; }
+    public static Settings get() { return DEFAULT; }
     
-    public Insets insets() { return new Insets(1, 1, 1, 1); }
+    public Insets insets() { return new Insets(0, 0, 0, 0); }
     
     public int laneCount() { return 10; }
     public int switchCount() { return 5; }
@@ -40,8 +40,9 @@ public enum Settings {
     public Dimension lampSize() { return new Dimension(100, 150); }
     public Dimension rightSize() { return new Dimension(40, 150); }
     public Color displayFrame() { return new Color(0x40, 0x20, 0x00, 0xFF); }
-    public Color lampLight() { return new Color(0xE0, 0xA0, 0x80, 0xFF); }
-    
+    public Color lampLight() { return new Color(0xE0, 0xB0, 0x90, 0xFF); }
+    public Color imgBackgroundAct() { return new Color(0xFF, 0xFF, 0xFF, 0xFF); }
+    public Color imgBackgroundDeact() { return new Color(0x70, 0x68, 0x60, 0xFF); }
     
     public Dimension contactSize() { return new Dimension(10, 10); }
     public Color contactColor() { return Color.BLACK; }

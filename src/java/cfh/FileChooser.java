@@ -22,9 +22,9 @@ public class FileChooser extends JFileChooser {
     
     private final Preferences prefs;
     
-    public FileChooser() {
+    public FileChooser(String key) {
         String classname = Thread.currentThread().getStackTrace()[2].getClassName();
-        prefs = Preferences.userRoot().node("/" + classname.replace('.', '/'));
+        prefs = Preferences.userRoot().node("/" + classname.replace('.', '/') + "/" + key);
         String dir = prefs.get(PREF_DIR, ".");
         setCurrentDirectory(new File(dir));
         setMultiSelectionEnabled(false);
