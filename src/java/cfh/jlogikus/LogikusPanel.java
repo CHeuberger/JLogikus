@@ -247,9 +247,9 @@ public class LogikusPanel extends JComponent implements Module {
         popup.add(createMenu("load", this::doLoad, "Load *program* from file"));
         popup.add(createMenu("save", this::doSave, "Save current *program* to file"));
         popup.addSeparator();
-        popup.add(createMenu("image", this::doImage, "Read image from file; CTRL: remove image"));
+        popup.add(createMenu("image", this::doImage, "Read image from file; CTRL remove image"));
         popup.addSeparator();
-        popup.add(createMenu("clear", this::doClear, "Remove all connections"));
+        popup.add(createMenu("clear", this::doClear, "Remove all connections; CTRL remove image and connections"));
         popup.add(createMenu("update", this::doUpdate, "Update status for debugging"));
         
         setComponentPopupMenu(popup);
@@ -327,7 +327,7 @@ public class LogikusPanel extends JComponent implements Module {
             
             if (version >= 100) {
                 var list = loadConnections(input);
-                clear();
+                clearConnections();
                 for (Connection connection : list) {
                     connections.add(connection);
                     connection.start().connected(connection);
@@ -419,8 +419,15 @@ public class LogikusPanel extends JComponent implements Module {
     }
     
     private void doClear(ActionEvent ev) {
-        if (showConfirmDialog(this, "Remove ALL connections?", "Confirm", OK_CANCEL_OPTION) == OK_OPTION) {
-            clear();
+        if ((ev.getModifiers() & ev.CTRL_MASK) == 0) {
+            if (showConfirmDialog(this, "Remove ALL connections?", "Confirm", OK_CANCEL_OPTION) == OK_OPTION) {
+                clearConnections();
+            }
+        } else {
+            if (showConfirmDialog(this, "Remove image and ALL connections?", "Confirm", OK_CANCEL_OPTION) == OK_OPTION) {
+                clearConnections();
+                clearImage();
+            }
         }
     }
     
@@ -462,11 +469,15 @@ public class LogikusPanel extends JComponent implements Module {
         repaint();
     }
     
-    private void clear() {
+    private void clearConnections() {
         connections.clear();
         groups().forEach(ContactGroup::clear);
-        outputs.stream().map(Output::lamp).forEach(LampFrame::clear);
         update();
+    }
+    
+    private void clearImage() {
+        outputs.stream().map(Output::lamp).forEach(LampFrame::clear);
+        repaint();
     }
     
     private JMenuItem createMenu(String text, ActionListener listener, String tooltip) {
