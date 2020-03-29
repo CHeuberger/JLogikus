@@ -1,0 +1,38 @@
+JLogikus
+101
+2020-03-29T01:24:00.738896900
+outputs:10
+L0
+L1
+L2
+L3
+L4
+L5
+L6
+L7
+L8
+L9
+toggles:10
+S0
+S1
+S2
+S3
+S4
+S5
+S6
+S7
+S8
+S9
+connections:12
+Q₂ ~ S2Ea₁
+S2Eb₁ ~ L2₂
+S2Ea₃ ~ S3Ea₂
+S3Ea₃ ~ S4Ea₂
+S4Ea₃ ~ S5Ea₂
+S5Ea₃ ~ S6Ea₂
+S6Ea₃ ~ S7Ea₂
+S3Eb₁ ~ L3₂
+S4Eb₁ ~ L4₂
+S5Eb₁ ~ L5₂
+S6Eb₁ ~ L6₂
+S7Eb₁ ~ L7₂
