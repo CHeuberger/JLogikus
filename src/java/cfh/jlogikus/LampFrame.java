@@ -2,11 +2,13 @@ package cfh.jlogikus;
 
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Rectangle;
 import java.util.stream.Stream;
 
 public class LampFrame extends Component {
     
     private Image image = null;
+    private Rectangle imgBounds = null;
     
     public LampFrame(String id, Module parent) {
         super(id, parent);
@@ -18,8 +20,9 @@ public class LampFrame extends Component {
         image = null;
     }
     
-    public void image(Image img) {
+    public void image(Image img, Rectangle bounds) {
         image = img;
+        imgBounds = bounds;
     }
     
     @Override
@@ -42,7 +45,10 @@ public class LampFrame extends Component {
                 g.setColor(settings.imgBackgroundDeact());
             }
             g.fillRect(x, y, w, h);
-            g.drawImage(image, x, y, w, h, this);
+            g.drawImage(image,
+                    x, y, x+w, y+h,
+                    imgBounds.x, imgBounds.y, imgBounds.x+imgBounds.width, imgBounds.y+imgBounds.height,
+                    this);
         }
     }
 

@@ -16,6 +16,7 @@ import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -370,8 +371,7 @@ public class LogikusPanel extends JComponent implements Module {
             int h = image.getHeight();
             for (var output : outputs) {
                 var w = width / rest;
-                Image subimage = image.getSubimage(x, 0, w, h);
-                output.lamp().image(subimage);
+                output.lamp().image(image, new Rectangle(x, 0, w, image.getHeight()));
                 x += w;
                 width -= w;
                 rest -= 1;
