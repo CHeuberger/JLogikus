@@ -13,7 +13,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -107,7 +106,7 @@ public class LogikusPanel extends JComponent implements Module {
             ));
         setLayout(new GridBagLayout());
         
-        Insets insets = settings.insets();
+        var insets = settings.insets();
         var y = 0;
         // Display
         add(new LeftFrame(), new GridBagConstraints(0, y, 1, 1, 0.0, 0.0, SOUTHEAST, HORIZONTAL, insets, 0, 0));
@@ -182,7 +181,7 @@ public class LogikusPanel extends JComponent implements Module {
                                         setStart(null, ev.getPoint());
                                     } else {
                                         mouseExited(ev);
-                                        Connection connection = new Connection(start, contact);
+                                        var connection = new Connection(start, contact);
                                         connections.add(connection);
                                         start.connected(connection);
                                         contact.connected(connection);
@@ -301,12 +300,7 @@ public class LogikusPanel extends JComponent implements Module {
                 }
             }
         } catch (IOException ex) {
-            ex.printStackTrace();
-            Object[] message = {
-                    ex.getClass().getSimpleName(),
-                    ex.getMessage(),
-            };
-            showMessageDialog(this, message, ex.getClass().getSimpleName(), ERROR_MESSAGE);
+            errorMessage(ex, "reading %s", file.getAbsolutePath());
         }
     }
 
@@ -325,22 +319,17 @@ public class LogikusPanel extends JComponent implements Module {
             try {
                 input = new LineNumberReader(new FileReader(file));
             } catch (FileNotFoundException ex) {
-                ex.printStackTrace();
-                Object[] message = {
-                        ex.getClass().getSimpleName(),
-                        ex.getMessage(),
-                };
-                showMessageDialog(this, message, ex.getClass().getSimpleName(), ERROR_MESSAGE);
+                errorMessage(ex, "opening %s", file.getAbsolutePath());
                 return;
             }
             String line = "";
             try (input) {
                 line = input.readLine();
                 if (!line.equals("JLogikus"))
-                    throw new IOException(input.getLineNumber() + ": unrecognized file header");
+                    throw new IOException("unrecognized file header");
                 line = input.readLine();
                 if (!List.of("103", "102", "101", "100").contains(line))
-                    throw new IOException(input.getLineNumber() + ": unrecognized version \"" + line + "\"");
+                    throw new IOException("unrecognized version \"" + line + "\"");
                 var version = Integer.parseInt(line);
 
                 line = input.readLine();  // date time
@@ -391,7 +380,7 @@ public class LogikusPanel extends JComponent implements Module {
                 }
                 if (connectList != null) {
                     clearConnections();
-                    for (Connection connection : connectList) {
+                    for (var connection : connectList) {
                         connections.add(connection);
                         connection.start().connected(connection);
                         connection.end().connected(connection);
@@ -402,13 +391,7 @@ public class LogikusPanel extends JComponent implements Module {
                 }
                 update();
             } catch (IOException | NumberFormatException | NoSuchElementException ex) {
-                ex.printStackTrace();
-                Object[] message = {
-                        ex.getClass().getSimpleName(),
-                        ex.getMessage(),
-                        input.getLineNumber() + ": " + line
-                };
-                showMessageDialog(this, message, ex.getClass().getSimpleName(), ERROR_MESSAGE);
+                errorMessage(ex, "loading line %d from %s", input.getLineNumber(), file.getAbsolutePath());
             }
         }
     }
@@ -422,17 +405,10 @@ public class LogikusPanel extends JComponent implements Module {
             BufferedImage img;
             try {
                 img = ImageIO.read(file);
-                if (img == null) {
-                    showMessageDialog(this, "Unable to read image", "Unknown Error", ERROR_MESSAGE);
-                    return;
-                }
+                if (img == null)
+                    throw new IOException("null image");
             } catch (IOException ex) {
-                ex.printStackTrace();
-                Object[] message = {
-                        ex.getClass().getSimpleName(),
-                        ex.getMessage(),
-                };
-                showMessageDialog(this, message, ex.getClass().getSimpleName(), ERROR_MESSAGE);
+                errorMessage(ex, "reading image from %s", file.getAbsolutePath());
                 return;
             }
             setImage(img);
@@ -444,9 +420,9 @@ public class LogikusPanel extends JComponent implements Module {
 
     private void setImage(BufferedImage img) {
         if (img != null) {
-            int rest = outputs.size();
-            int x = 0;
-            int width = img.getWidth();
+            var rest = outputs.size();
+            var x = 0;
+            var width = img.getWidth();
             for (var output : outputs) {
                 var w = width / rest;
                 output.lamp().image(img, new Rectangle(x, 0, w, img.getHeight()));
@@ -463,7 +439,7 @@ public class LogikusPanel extends JComponent implements Module {
     private List<String> loadList(LineNumberReader input, String key, int expected) throws IOException {
         var count = loadCount(input, key);
         if (count != expected)
-            throw new IOException(String.format("%d: invalid count for %s: %d, expected %s", input.getLineNumber(), key, count, expected));
+            throw new IOException(String.format("invalid count for %s: %d, expected %s", key, count, expected));
         var list = new ArrayList<String>();
         for (int i = 0; i < count; i++) {
             list.add(input.readLine());
@@ -474,26 +450,27 @@ public class LogikusPanel extends JComponent implements Module {
     private List<Connection> loadConnections(LineNumberReader input) throws IOException {
         var count = loadCount(input, "connections:");
         if (count < 0)
-            throw new IOException(input.getLineNumber() + ": invalid number of connections");
+            throw new IOException("invalid number of connections");
         var list = new ArrayList<Connection>();
         for (var i = 0; i < count; i++) {
             var line = input.readLine();
             var tokens = line.split(" *~ *", 2);
             if (tokens.length < 2)
-                throw new IOException(input.getLineNumber() + ": connection unparseable \"" + line + "\"");
+                throw new IOException("connection unparseable \"" + line + "\"");
             var start = contactForId(tokens[0], input.getLineNumber());
             var end = contactForId(tokens[1], input.getLineNumber());
             if (start == end) {
-                throw new IOException(input.getLineNumber() + ": connection to same contact not allowed \"" + line + "\"");
+                throw new IOException("connection to same contact not allowed \"" + line + "\"");
             }
             list.add(new Connection(start, end));
         }
         return list;
     }
+    
     private int loadCount(LineNumberReader input, String key) throws IOException {
         var line = input.readLine();
         if (!line.startsWith(key))
-            throw new IOException(String.format("%d: expected \"%s\" but got \"%s\"", input.getLineNumber(), key, line));
+            throw new IOException(String.format("expected \"%s\" but got \"%s\"", key, line));
         var count = Integer.parseInt(line.substring(key.length()).trim());
         return count;
     }
@@ -591,6 +568,16 @@ public class LogikusPanel extends JComponent implements Module {
         } finally {
             gg.dispose();
         }
+    }
+    
+    private void errorMessage(Exception ex, String format, Object... args) {
+        ex.printStackTrace();
+        Object[] message = {
+                ex.getClass().getSimpleName(),
+                ex.getMessage(),
+                String.format(format, args),
+        };
+        showMessageDialog(this, message, ex.getClass().getSimpleName(), ERROR_MESSAGE);
     }
     
     @Override

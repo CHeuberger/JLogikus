@@ -37,7 +37,7 @@ public abstract class SwitchContact extends Component {
     }
 
     public void closed(boolean close) {
-        this.closed = close;
+        closed = close;
     }
 
     protected abstract ContactGroup createContact(String id0);

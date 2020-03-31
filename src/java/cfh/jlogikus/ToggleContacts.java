@@ -40,7 +40,7 @@ public class ToggleContacts extends ModuleImpl {
     }
     
     public void toggle(boolean toggle) {
-        this.toggled = toggle;
+        toggled = toggle;
         open.closed(toggled);
         closed.closed(!toggled);
     }

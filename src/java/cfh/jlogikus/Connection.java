@@ -1,7 +1,10 @@
 package cfh.jlogikus;
 
 import java.awt.Graphics2D;
-import java.awt.Point;
+import java.awt.geom.Path2D;
+import java.awt.geom.Point2D;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Stream;
 
 import javax.swing.JComponent;
@@ -13,6 +16,7 @@ public class Connection {
     
     private final Contact start;
     private final Contact end;
+    private final List<Point2D> points = new ArrayList<>();
     
     private transient boolean active = false;
 
@@ -20,18 +24,31 @@ public class Connection {
         this.start = start;
         this.end = end;
     }
+    
+    public void add(float x, float y) {
+        points.add(new Point2D.Float(x, y));
+    }
 
     public void paintComponent(JComponent panel, Graphics2D gg) {
+        var w = gg.getClipBounds().width;
+        var h = gg.getClipBounds().height;
+        var path = new Path2D.Float();
+        var x = start.getWidth() / 2 - 1;
+        var y = start.getHeight() / 2 - 1;
+        var point = SwingUtilities.convertPoint(start, x, y, panel);
+        path.moveTo(point.x, point.y);
+        for (var p : points) {
+            path.lineTo(p.getX() * w, p.getY() * h);
+        }
+        point = SwingUtilities.convertPoint(end, x, y, panel);
+        path.lineTo(point.x, point.y);
+        
         gg.setColor(active ? settings.connectionBorderAct() : settings.connectionBorderDeact());
         gg.setStroke(settings.connectionStrokeBorder());
-        int x = start.getWidth() / 2 - 1;
-        int y = start.getHeight() / 2 - 1;
-        Point ps = SwingUtilities.convertPoint(start, x, y, panel);
-        Point pe = SwingUtilities.convertPoint(end, x, y, panel);
-        gg.drawLine(ps.x, ps.y, pe.x, pe.y);
+        gg.draw(path);
         gg.setColor(active ? settings.connectionColorAct() : settings.connectionColorDeact());
         gg.setStroke(settings.connectionStroke());
-        gg.drawLine(ps.x, ps.y, pe.x, pe.y);
+        gg.draw(path);
     }
 
     public Stream<ContactGroup> connected() {

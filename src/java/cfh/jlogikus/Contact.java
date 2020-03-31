@@ -49,12 +49,10 @@ public class Contact extends Component {
     @Override
     public Stream<ContactGroup> groups() {
         throw new RuntimeException("not implemented");
-//        return parent.groups();
     }
     
     @Override
     public Stream<ContactGroup> connected(Contact contact) {
         throw new RuntimeException("not implemented");
-//        return parent.connected(contact);
     }
 }
