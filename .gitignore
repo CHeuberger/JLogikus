@@ -4,3 +4,7 @@
 *~
 *.swp
 *.bak
+
+# virtual machine crash logs
+hs_err_pid*
+
